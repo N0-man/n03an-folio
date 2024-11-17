@@ -1,0 +1,15 @@
+{
+	"version": "0.1",
+	"configurations": [
+		{
+			"name": "n0man-folio",
+			"type": "python",
+			"request": "launch",
+			"python": ".env/bin/python",
+			"module": "n0man-folio",
+			"args": [],
+			"cwd": "${workspaceFolder}",
+			"console": "integratedTerminal"
+		}
+	]
+}
