@@ -34,7 +34,7 @@ section{
 
 .col-sm-12:nth-child(n) .card,
 .col-sm-12:nth-child(n) .card .title .fa{
-  background: linear-gradient(-45deg,#065984,#049fd8);
+  background: linear-gradient(-45deg,#049fd8,#343839);
 
 }
 
@@ -46,7 +46,7 @@ section{
 
 .col-md-12:nth-child(n) .card,
 .col-md-12:nth-child(n) .card .title .fa{
-  background: linear-gradient(-45deg,#065984,#049fd8);
+  background: linear-gradient(-45deg,#049fd8,#343839);
 
 }
 
@@ -257,20 +257,23 @@ def create_stock_card(
         unit_cost = 0
         folio_percent = 0
 
+    ticker_icon = f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
     card_html = f"""
     <div class="col-sm-12 col-md-12">
         <div class="card text-center p-3">
             <div class="d-flex align-items-center justify-content-center mb-3">
-                <img src="/file=/static/ticker_icons/{symbol}.png" width="100" class="me-3">
-                <div>
-                    <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">{quantity} Owned</span>
-                    <h5 class="mb-0">{symbol}</h5>
-                    <p class="m-0">{description}</p>
-                    <small class="text-dark">{exchange}</small>
+                <div class="col-4 align-items-center text-center">
+                  <img src="{ticker_icon}" width="100" class="me-3">
                 </div>
-            </div>
-            <div class="price mb-2">
-                <h4 class="badge rounded-pill bg-danger m-0 w-50 text-center"><sup>$</sup>450.45</h4>
+                <div class="col-8">
+                    <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">{quantity}  Owned</span>
+                    <h2 class="mb-0 mt-1">{symbol}</h3>
+                    <p class="m-0">{description}</p>
+                    <small class="text-warning mb-1">{exchange}</small>
+                    <div class="price mb-2 mt-2">
+                        <h4 class="badge rounded-pill bg-danger m-0 w-50 text-center"><sup>$</sup>450.45</h4>
+                    </div>
+                </div>
             </div>
 
             <div class="table-responsive">
@@ -278,37 +281,37 @@ def create_stock_card(
                   <tbody>
                     <tr>
                         <td class="table-dark">Market Value</td>
-                        <td>$10,900.00</td>
+                        <td class="text-light fw-bold"><sup>$</sup>10,900.00</td>
                     </tr>
 
                     <tr>
                         <td class="table-dark">Cost Basis</td>
-                        <td>${cost_basis}</td>
+                        <td class="text-light fw-bold"><sup>$</sup>{cost_basis}</td>
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Average Price</td>
-                        <td>${unit_cost}</td>
+                        <td class="text-light fw-bold"><sup>$</sup>{unit_cost}</td>
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Folio %</td>
-                        <td>{folio_percent} %</td>
+                        <td class="text-light fw-bold">{folio_percent}<sup>%</sup></td>
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Realised PnL</td>
-                        <td>${r_pnl}</td>
+                        <td class="text-light fw-bold"><sup>$</sup>{r_pnl}</td>
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Unrealised PnL</td>
-                        <td>$10,900.00</td>
+                        <td class="text-light fw-bold"><sup>$</sup>10,900.00</td>
                     </tr>
                       
                     <tr>
                         <td class="table-dark">Total PnL</td>
-                        <td>$10,900.00</td>
+                        <td class="text-light fw-bold"><sup>$</sup>10,900.00</td>
                     </tr>
                   </tbody>
                 </table>

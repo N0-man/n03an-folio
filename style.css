@@ -98,6 +98,6 @@ body{
 }
 .col-sm-4:nth-child(3) .card,
 .col-sm-4:nth-child(3) .card .title .fa{
-  background: linear-gradient(-45deg,#065984,#049fd8);
+  background: linear-gradient(-45deg,#049fd8,#343839);
 
 }
