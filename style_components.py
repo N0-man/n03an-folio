@@ -167,6 +167,10 @@ section{
   :root { font-family: 'Inter var', sans-serif !important; }
 }
 
+.icon-button-wrapper {
+  visibility: hidden !important;
+}
+
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" >
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -324,7 +328,7 @@ def create_stock_card(
                 </span>
                 </div>
                 <div class="col-8">
-                    <span class="d-inline-block mb-2 fw-bold" style="color: #13ff01 !important; font-size: 18px !important;">
+                    <span class="d-inline-block mb-2" style="color: #13ff01 !important; font-size: 18px !important;">
                       {quantity}  Owned
                     </span>
                 </div>
@@ -342,9 +346,9 @@ def create_stock_card(
             </div>
             <div class="d-flex align-items-center mb-3">
                 <span class="text-warning mx-2 fw-bold">TIME</span>
-                <span class="text-dark mx-2 fw-bold px-1">|</span>
+                <span class="text-warning mx-2 fw-bold px-1">|</span>
                 <span class="text-white mx-2 fw-bold">LOW</span>
-                <span class="text-dark mx-2 fw-bold px-1">|</span>
+                <span class="text-warning mx-2 fw-bold px-1">|</span>
                 <span class="text-white mx-2 fw-bold">HIGH</span>
             </div>
             <div class="d-flex align-items-center mb-3">
