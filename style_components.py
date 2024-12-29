@@ -4,9 +4,7 @@ from folio_service import *
 load_all_css = """
 <style>
 
-body{
 
-}
 section{
   width: 100%;
   -webkit-box-sizing: border-box;
@@ -35,7 +33,7 @@ section{
 
 .col-sm-12:nth-child(n) .card,
 .col-sm-12:nth-child(n) .card .title .fa{
-  background: linear-gradient(-45deg,#049fd8,#343839);
+  background: linear-gradient(-45deg,#0f3a5d, #153044);
 
 }
 
@@ -47,7 +45,7 @@ section{
 
 .col-md-12:nth-child(n) .card,
 .col-md-12:nth-child(n) .card .title .fa{
-  background: linear-gradient(-45deg,#049fd8,#343839);
+  background: linear-gradient(-45deg,#0f3a5d, #153044);
 
 }
 
@@ -157,18 +155,26 @@ section{
     overflow: hidden;
 }
 
+:root { 
+  font-family: 'Inter', sans-serif !important; 
+}
 
+:root .dark {
+  --background-fill-primary: #10212e !important; 
+}
 
-:root { font-family: 'Inter', sans-serif; }
 @supports (font-variation-settings: normal) {
-  :root { font-family: 'Inter var', sans-serif; }
+  :root { font-family: 'Inter var', sans-serif !important; }
 }
 
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" >
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<link rel="preconnect" href="https://rsms.me/">
-<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
 """
 
@@ -285,18 +291,6 @@ def create_stock_card(
             <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
           """
 
-    def ticker_color():
-        if current > unit_cost:
-            return "success"
-        else:
-            return "danger"
-
-    def ticker_caret():
-        if current > unit_cost:
-            return "fa-caret-up"
-        else:
-            return "fa-caret-down"
-
     def caret(price_a, price_b):
         if price_a > price_b:
             return "fa-caret-up"
@@ -324,13 +318,13 @@ def create_stock_card(
         <div class="card text-center p-3">
             <div class="d-flex align-items-center justify-content-center mb-3">
                 <div class="col-4 d-flex align-items-start">  
-                  <span class="bg-dark p-1 {ticker_padding()} rounded text-white d-inline-block mx-1">
+                  <span class="text-white d-inline-block mx-1">
                     <i class="fa-solid {caret(current, unit_cost)} text-{color(current, unit_cost)} fa-lg"></i>
                   <sup> $</sup>{current}
                 </span>
                 </div>
                 <div class="col-8">
-                    <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">
+                    <span class="d-inline-block mb-2 fw-bold" style="color: #13ff01 !important; font-size: 18px !important;">
                       {quantity}  Owned
                     </span>
                 </div>
@@ -343,7 +337,7 @@ def create_stock_card(
                 <div class="col-8">
                     <h2 class="mb-0 mt-1">{symbol}</h3>
                     <p class="m-0">{description}</p>
-                    <small class="text-warning mb-1">{exchange}</small>
+                    <small class="text-warning mb-1 fw-bold">{exchange}</small>
                 </div>
             </div>
             <div class="d-flex align-items-center mb-3">
@@ -355,22 +349,22 @@ def create_stock_card(
             </div>
             <div class="d-flex align-items-center mb-3">
                 <span class="text-warning mx-2">52W</span>
-                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                <span class="text-white d-inline-block mx-1 px-2">
                   <i class="fa-solid {caret(fifty_two_low, current)} text-{color(fifty_two_low, current)} fa-lg"></i>
                   <sup> $</sup>{fifty_two_low}
                 </span>
-                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                <span class="text-white d-inline-block mx-1 px-2">
                   <i class="fa-solid {caret(fifty_two_high, current)} text-{color(fifty_two_high, current)} fa-lg"></i>
                   <sup> $</sup>{fifty_two_high}
                 </span>
             </div>
             <div class="d-flex align-items-center mb-3">
-                <span class="text-warning mx-2">Day</span>
-                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                <span class="text-warning mx-2">DAY</span>
+                <span class="text-white d-inline-block mx-1 px-2">
                   <i class="fa-solid {caret(day_low, current)} text-{color(day_low, current)} fa-lg"></i>
                   <sup> $</sup>{day_low}
                 </span>
-                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                <span class="text-white d-inline-block mx-1 px-2">
                   <i class="fa-solid {caret(day_high, current)} text-{color(day_high, current)} fa-lg"></i>
                   <sup> $</sup>{day_high}
                 </span>
@@ -429,9 +423,12 @@ def create_stock_card(
                 </table>
             </div>
 
-            <button class="btn btn-dark text-light border-dark m-3">
+            <button class="btn btn-dark text-light border-dark m-3" data-toggle="modal" data-target="#{symbol}">
                 <i class="fa-solid fa-binoculars"></i> {symbol} Details
             </button>
+            
+            {modal(symbol)}
+
         </div>
     </div>
     """
@@ -466,144 +463,55 @@ def stock_cards(folio, total_cost_basis):
         </div>
       </div>
     </section>
+
+    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
     """
 
     return cards_html
 
 
-data_cards = """
-<section>
-  <div class="container-fluid">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-12 col-md-12">
-            <div class="card text-center p-3">
-                <div class="d-flex align-items-center justify-content-center mb-3">
-                    <img src="https://assets.parqet.com/logos/symbol/TSLA?format=png" width="100" class="rounded-circle me-3">
-                    <div>
-                        <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">71 Owned</span>
-                        <h2 class="m-0">TSLA</h2>
-                        <p class="m-0">Tesla Inc Company Name</p>
-                    </div>
-                </div>
-
-                <div class="price mb-2">
-                    <h4 class="badge rounded-pill bg-danger m-0 w-50 text-center"><sup>$</sup>450.45</h4>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-dark-border">
-                        <tbody>
-                            <tr>
-                                <td class="table-dark">Market Value</td>
-                                <td>$10,900.00</td>
-                            </tr>
-
-                            <tr>
-                                <td class="table-dark">Cost Basis</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Average Price</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Folio %</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Realised PnL</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Unrealised PnL</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                             
-                            <tr>
-                                <td class="table-dark">Total PnL</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <button class="btn btn-dark text-light border-dark m-3">
-                    <i class="fa-solid fa-binoculars"></i> Details
-                </button>
-            </div>
-        </div>
-
-        <!-- END Col one -->
-        <div class="col-sm-12 col-md-12">
-            <div class="card text-center p-3">
-                <div class="d-flex align-items-center justify-content-center mb-3">
-                    <img src="https://assets.parqet.com/logos/symbol/TSLA?format=png" width="100" class="rounded-circle me-3">
-                    <div>
-                        <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">71 Owned</span>
-                        <h2 class="m-0">TSLA</h2>
-                        <p class="m-0">Tesla Inc Company Name</p>
-                    </div>
-                </div>
-
-                <div class="price mb-2">
-                    <h4 class="badge rounded-pill bg-danger m-0 w-50 text-center"><sup>$</sup>450.45</h4>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-dark-border">
-                        <tbody>
-                            <tr>
-                                <td class="table-dark">Market Value</td>
-                                <td>$10,900.00</td>
-                            </tr>
-
-                            <tr>
-                                <td class="table-dark">Cost Basis</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Average Price</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Folio %</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Realised PnL</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                            
-                            <tr>
-                                <td class="table-dark">Unrealised PnL</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                             
-                            <tr>
-                                <td class="table-dark">Total PnL</td>
-                                <td>$10,900.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <button class="btn btn-dark text-light border-dark m-3">
-                    <i class="fa-solid fa-binoculars"></i> Details
-                </button>
-            </div>
-        </div>
-        <!-- END Col two -->
+def modal(symbol):
+    return f"""
+  <div class="modal fade" id={symbol} tabindex="-1" role="dialog" aria-labelledby={symbol} aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{symbol}Title">{symbol}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
-</section>
-
+</div>
 """

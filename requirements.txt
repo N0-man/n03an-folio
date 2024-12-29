@@ -4,3 +4,4 @@ numpy
 pandas
 cryptography
 yfinance
+gradio_modal
