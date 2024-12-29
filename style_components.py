@@ -291,6 +291,12 @@ def create_stock_card(
         else:
             return "danger"
 
+    def ticker_caret():
+        if current > unit_cost:
+            return "fa-caret-up"
+        else:
+            return "fa-caret-down"
+
     def red_yellow(price_a, price_b):
         if price_a > price_b:
             return f"""
@@ -305,17 +311,26 @@ def create_stock_card(
     <div class="col-sm-12 col-md-12">
         <div class="card text-center p-3">
             <div class="d-flex align-items-center justify-content-center mb-3">
-                <div class="col-4 align-items-center text-center">
+                <div class="col-4 d-flex align-items-start">  
+                  <span class="bg-dark p-1 rounded text-{ticker_color()} d-inline-block mb-2 fw-bold">
+                    <i class="fa-solid {ticker_caret()} text-{ticker_color()} fa-lg"></i> ${current}
+                  </span>
+                </div>
+                <div class="col-8">
+                    <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">
+                      {quantity}  Owned
+                    </span>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center mb-3">
+                <div class="col-4">                  
                   <img src="{ticker_icon}" width="100" class="me-3">
                 </div>
                 <div class="col-8">
-                    <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">{quantity}  Owned</span>
                     <h2 class="mb-0 mt-1">{symbol}</h3>
                     <p class="m-0">{description}</p>
                     <small class="text-warning mb-1">{exchange}</small>
-                    <div class="price mb-2 mt-2">
-                        <h4 class="badge rounded-pill bg-{ticker_color()} m-0 px-4 text-center"><sup>$</sup>{current}</h4>
-                    </div>
                 </div>
             </div>
             <div class="d-flex align-items-center mb-3">
