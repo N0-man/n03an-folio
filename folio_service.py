@@ -6,6 +6,7 @@ import pandas as pd
 from cryptography.fernet import Fernet
 import os
 from io import StringIO
+import yfinance as yf
 
 from datetime import datetime
 
@@ -13,12 +14,14 @@ data = "current_data"
 folio_key = os.getenv("FOLIO_KEY")
 f = Fernet(folio_key)
 
+
 def decrypt(file_path):
     with open(file_path, "rb") as file:
         file_data = file.read()
     raw = f.decrypt(file_data)
-    raw_str = raw.decode('utf-8')
+    raw_str = raw.decode("utf-8")
     return pd.read_csv(StringIO(raw_str))
+
 
 def get_account_info():
     raw = decrypt(f"{data}/account.csv")
@@ -50,7 +53,6 @@ def get_cash_report():
     available_cash = np.round(
         crtt[crtt["CurrencyPrimary"] == "BASE_SUMMARY"]["NetCashBalanceSLB"].iloc[0], 2
     )
-    print(available_cash)
     return crtt, available_cash
 
 
@@ -218,6 +220,17 @@ def get_folios():
         np.round(total_pnl, 2),
         total_fees,
         equities,
+    )
+
+
+def get_ticker_info(symbol):
+    data = yf.Ticker(symbol).info
+    return (
+        np.round(data["fiftyTwoWeekHigh"], 2),
+        np.round(data["fiftyTwoWeekLow"], 2),
+        np.round(data["dayHigh"], 2),
+        np.round(data["dayLow"], 2),
+        np.round(data["currentPrice"], 2),
     )
 
 
