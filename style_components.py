@@ -4,6 +4,9 @@ from folio_service import *
 load_all_css = """
 <style>
 
+body {
+  background-color: #10212e !important; 
+}
 
 section{
   width: 100%;
