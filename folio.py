@@ -2,6 +2,8 @@ import gradio as gr
 from folio_service import *
 from style_components import *
 import os
+from gradio_modal import Modal
+from ticker_info import *
 
 IB = "IB"
 GROWTH = "Growth"
@@ -31,6 +33,7 @@ def main():
         secondary_hue="yellow",
         neutral_hue="sky",
         text_size="lg",
+        font=[gr.themes.GoogleFont("Inter"), "sans-serif"],
     )
 
     (
@@ -47,6 +50,7 @@ def main():
     available_cash, self_contribution, interest_recieved = get_cash_details()
     market_value, total_u_pnl = get_market_data(portfolio)
 
+    # with gr.Blocks(theme=gr.themes.Default(font=[gr.themes.GoogleFont("Inconsolata"), "Arial", "sans-serif"]))
     with gr.Blocks(theme=theme, fill_height=True) as folio:
         gr.HTML(load_all_css)
         with gr.Row(equal_height=False):
