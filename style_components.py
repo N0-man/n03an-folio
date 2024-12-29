@@ -157,6 +157,8 @@ section{
     overflow: hidden;
 }
 
+
+
 :root { font-family: 'Inter', sans-serif; }
 @supports (font-variation-settings: normal) {
   :root { font-family: 'Inter var', sans-serif; }
@@ -180,65 +182,65 @@ def folio_overview(
           <tbody>
             <tr>
               <td>Self Contribution</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-cart-shopping me-2"></i>
-                <p class="badge rounded-pill bg-info m-0 text-dark text-center"><sup class="text-dark">$</sup>{self_contribution}</p>
+                <span class="bg-info p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{self_contribution}</span>
               </td>
                 
             </tr>
             
             <tr>
               <td>Market Value</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-earth-americas me-2"></i>
-                <p class="badge rounded-pill bg-warning m-0 text-dark text-center"><sup class="text-dark">$</sup>{market_value}</p>
+                <span class="bg-warning p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{market_value}</span>
               </td>
             </tr>
             
             <tr>
               <td>Available Cash</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-hand-holding-dollar me-2"></i>
-                <p class="badge rounded-pill bg-success m-0 text-light text-center"><sup class="text-light">$</sup>{cash}</p>
+                <span class="bg-success p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{cash}</span>
               </td>
             </tr>
             
             <tr>
               <td>Equities</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-city me-2"></i>
-                <p class="badge rounded-pill bg-info m-0 text-dark text-center"><sup class="text-dark">$</sup>{equities}</p>
+                <span class="bg-info p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{equities}</span>
               </td>
             </tr>
             
             <tr>
               <td>Realised PnL</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-thumbs-up me-2"></i>
-                <p class="badge rounded-pill bg-success m-0 text-light text-center"><sup class="text-light">$</sup>{r_pnl}</p>
+                <span class="bg-success p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{r_pnl}</span>
               </td>
             </tr>
             <tr>
               <td>Unrealised PnL</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-face-surprise me-2"></i>
-                <p class="badge rounded-pill bg-warning m-0 text-dark text-center"><sup class="text-dark">$</sup>{u_pnl}</p>
+                <span class="bg-warning p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{u_pnl}</span>
               </td>
             </tr>
             
             <tr>
               <td>Interest</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-regular fa-trash-can me-2"></i>
-                <p class="badge rounded-pill bg-danger m-0 text-light text-center"><sup class="text-light">$</sup>{interest}</p>
+                <span class="bg-danger p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{interest}</span>
               </td>
             </tr>
             
             <tr>
               <td>Fees</td>
-              <td>
+              <td class="px-2">
                 <i class="fa-solid fa-poo me-2"></i>
-                <p class="badge rounded-pill bg-secondary m-0 text-light text-center"><sup class="text-light">$</sup>{fees}</p>
+                <span class="bg-secondary p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{fees}</span>
               </td>
             </tr>
             

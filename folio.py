@@ -12,13 +12,18 @@ passkey = os.getenv("PASSCODE")
 
 def handle_passcode(passcode):
     if passcode == passkey:
-        return gr.Textbox(visible=False), gr.Button(visible=False), gr.Tabs(visible=True)
+        return (
+            gr.Textbox(visible=False),
+            gr.Button(visible=False),
+            gr.Tabs(visible=True),
+        )
     else:
         raise gr.Error(
-                "That looks like a fart 💨. Are you who you are?",
-                duration=10,
-            )
+            "That looks like a fart 💨. Are you who you are?",
+            duration=10,
+        )
         # return gr.Textbox(visible=True), gr.Button(visible=True), gr.Tabs(visible=False)
+
 
 def main():
     theme = gr.themes.Soft(
@@ -34,12 +39,13 @@ def main():
         emerging_portfolio,
         divident_portfolio,
         exited_assets,
-        total_pnl,
+        total_r_pnl,
         total_fees,
         equities,
     ) = get_folios()
 
     available_cash, self_contribution, interest_recieved = get_cash_details()
+    market_value, total_u_pnl = get_market_data(portfolio)
 
     with gr.Blocks(theme=theme, fill_height=True) as folio:
         gr.HTML(load_all_css)
@@ -67,11 +73,11 @@ def main():
                 gr.HTML(
                     folio_overview(
                         self_contribution,
-                        "115200.32",
+                        market_value,
                         available_cash,
                         equities,
-                        total_pnl,
-                        total_pnl + 1000,
+                        total_r_pnl,
+                        total_u_pnl,
                         interest_recieved,
                         total_fees,
                     ),
@@ -81,28 +87,32 @@ def main():
 
             with gr.Tab(GROWTH):
                 gr.Markdown(
-                """
+                    """
                 # n03an's folio
-                """)
+                """
+                )
             with gr.Tab(EMERGING):
                 gr.Label("Hello World", elem_classes="dancing")
             with gr.Tab(DIVIDENT):
                 gr.Markdown(
-                """
+                    """
                 # n03an's folio
-                """)
+                """
+                )
 
         with gr.Row():
             with gr.Column(scale=2):
                 passcode = gr.Textbox(
-                    placeholder="enter your passcode",
-                    show_label = False,
-                    type="password"
+                    placeholder="enter your passcode", show_label=False, type="password"
                 )
             with gr.Column():
                 submit = gr.Button("Submit", interactive=True)
 
-        submit.click(fn = handle_passcode, inputs=[passcode], outputs=[passcode, submit, folio_tabs])
+        submit.click(
+            fn=handle_passcode,
+            inputs=[passcode],
+            outputs=[passcode, submit, folio_tabs],
+        )
 
     folio.launch()
 
