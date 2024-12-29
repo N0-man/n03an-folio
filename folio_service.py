@@ -106,10 +106,6 @@ def buy_sell_trades(symbol):
     )
 
 
-def total_profits(portfolio):
-    total = portfolio["PnL"].sum()
-
-
 def squash(portfolio, new_symbol, old_symbol):
     # Select rows to merge
     new_asset = portfolio[portfolio["SYMBOL"] == new_symbol].iloc[0]
@@ -232,6 +228,23 @@ def get_ticker_info(symbol):
         np.round(data["dayLow"], 2),
         np.round(data["currentPrice"], 2),
     )
+
+
+def get_market_data(portfolio):
+    total_value = 0
+    total_u_pnl = 0
+    for _, row in portfolio.iterrows():
+        symbol = row["SYMBOL"]
+        quantity = row["Quantity"]
+        cost_basis = row["CostBasis"]
+        current_price = yf.Ticker(symbol).info["currentPrice"]
+
+        market_value = quantity * current_price
+        u_pnl = market_value - cost_basis
+
+        total_value += market_value
+        total_u_pnl += u_pnl
+    return np.round(total_value, 2), np.round(total_u_pnl, 2)
 
 
 # def table(folio):
