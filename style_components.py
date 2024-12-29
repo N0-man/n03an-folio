@@ -1,4 +1,5 @@
 import numpy as np
+from folio_service import *
 
 load_all_css = """
 <style>
@@ -257,7 +258,47 @@ def create_stock_card(
         unit_cost = 0
         folio_percent = 0
 
-    ticker_icon = f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
+    fifty_two_high, fifty_two_low, day_high, day_low, current = get_ticker_info(symbol)
+    market_value = np.round((quantity * current), 2)
+    u_pnl = np.round((market_value - cost_basis), 2)
+    t_pnl = np.round((u_pnl + r_pnl), 2)
+
+    ticker_icon = (
+        f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
+    )
+
+    # def red_green(price_a, price_b):
+    #     if price_a > price_b:
+    #         return "success"
+    #     else:
+    #         return "danger"
+
+    def red_green(price_a, price_b):
+        if price_a > price_b:
+            return f"""
+            <span class="bg-success p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+          """
+        else:
+            return f"""
+            <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+          """
+
+    def ticker_color():
+        if current > unit_cost:
+            return "success"
+        else:
+            return "danger"
+
+    def red_yellow(price_a, price_b):
+        if price_a > price_b:
+            return f"""
+            <span class="bg-warning p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{price_a}</span>
+          """
+        else:
+            return f"""
+            <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+          """
+
     card_html = f"""
     <div class="col-sm-12 col-md-12">
         <div class="card text-center p-3">
@@ -271,56 +312,68 @@ def create_stock_card(
                     <p class="m-0">{description}</p>
                     <small class="text-warning mb-1">{exchange}</small>
                     <div class="price mb-2 mt-2">
-                        <h4 class="badge rounded-pill bg-danger m-0 px-4 text-center"><sup>$</sup>450.45</h4>
+                        <h4 class="badge rounded-pill bg-{ticker_color()} m-0 px-4 text-center"><sup>$</sup>{current}</h4>
                     </div>
                 </div>
             </div>
             <div class="d-flex align-items-center mb-3">
                 <span class="text-warning mx-2">52W:</span>
-                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$223.92</small>
-                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$223.92</small>
+                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{fifty_two_low}</small>
+                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{fifty_two_high}</small>
             </div>
             <div class="d-flex align-items-center mb-3">
                 <span class="text-warning mx-2">Day:</span>
-                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$223.92</small>
-                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$623.92</small>
+                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{day_low}</small>
+                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{day_high}</small>
             </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-dark-border">
                   <tbody>
                     <tr>
                         <td class="table-dark">Market Value</td>
-                        <td class="text-light fw-bold"><sup>$</sup>10,900.00</td>
+                        <td class="text-light fw-bold">{red_green(market_value, cost_basis)}</td>
                     </tr>
 
                     <tr>
                         <td class="table-dark">Cost Basis</td>
-                        <td class="text-light fw-bold"><sup>$</sup>{cost_basis}</td>
+                        <td class="text-light fw-bold">
+                           <span class="bg-info p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{cost_basis}</span>
+                        </td>                       
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Average Price</td>
-                        <td class="text-light fw-bold"><sup>$</sup>{unit_cost}</td>
+                        <td class="text-light fw-bold">
+                           <span class="bg-white p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{unit_cost}</span>
+                        </td>                       
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Folio %</td>
-                        <td class="text-light fw-bold">{folio_percent}<sup>%</sup></td>
+                        <td class="text-light fw-bold">
+                           <span class="bg-info p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{folio_percent}</span>
+                        </td>   
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Realised PnL</td>
-                        <td class="text-light fw-bold"><sup>$</sup>{r_pnl}</td>
+                        <td class="text-light fw-bold">
+                           {red_green(r_pnl,0)}
+                        </td> 
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Unrealised PnL</td>
-                        <td class="text-light fw-bold"><sup>$</sup>10,900.00</td>
+                        <td class="text-light fw-bold">
+                          {red_yellow(u_pnl,0)}
+                        </td> 
                     </tr>
                       
                     <tr>
                         <td class="table-dark">Total PnL</td>
-                        <td class="text-light fw-bold"><sup>$</sup>10,900.00</td>
+                        <td class="text-light fw-bold">
+                           {red_yellow(t_pnl,0)}
+                        </td> 
                     </tr>
                   </tbody>
                 </table>
