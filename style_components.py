@@ -271,11 +271,20 @@ def create_stock_card(
                     <p class="m-0">{description}</p>
                     <small class="text-warning mb-1">{exchange}</small>
                     <div class="price mb-2 mt-2">
-                        <h4 class="badge rounded-pill bg-danger m-0 w-50 text-center"><sup>$</sup>450.45</h4>
+                        <h4 class="badge rounded-pill bg-danger m-0 px-4 text-center"><sup>$</sup>450.45</h4>
                     </div>
                 </div>
             </div>
-
+            <div class="d-flex align-items-center mb-3">
+                <span class="text-warning mx-2">52W:</span>
+                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$223.92</small>
+                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$223.92</small>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <span class="text-warning mx-2">Day:</span>
+                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$223.92</small>
+                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">$623.92</small>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-dark-border">
                   <tbody>

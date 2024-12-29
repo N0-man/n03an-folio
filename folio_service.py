@@ -98,7 +98,7 @@ def buy_sell_trades(symbol):
     total_buy = orders[(orders["Buy/Sell"] == "BUY")]["Quantity"].sum()
     current_quantity = orders["Quantity"].sum()
     return (
-        np.round(current_quantity, 0),
+        int(np.round(current_quantity, 0)),
         np.round(total_buy, 1),
         np.round(total_sell, 1),
     )
