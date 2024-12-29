@@ -12,7 +12,6 @@ section{
   width: 100%;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-          padding: 40px 0;
 }
 .card{
   position: relative;
@@ -72,25 +71,11 @@ section{
   font-size: 28px;
  z-index: 2;
 }
-.price,.option{
-  position: relative;
-  z-index: 2;
-}
+
 .price {
     color: #fff;
 }
-.option ul {
-  margin: 0;
-  padding: 0;
 
-}
-.option ul li {
-    margin: 0 0 10px;
-    padding: 0;
-    list-style: none;
-    color: #fff;
-    font-size: 16px;
-}
 .card a {
   position: relative;
   z-index: 2;
@@ -115,7 +100,7 @@ section{
     height: 50px;
     border-radius: 50%; /* Makes it circular */
     object-fit: cover; /* Ensures the image fits the circle */
-    border: 2px solid #ddd; /* Optional: adds a border */
+    border: 2px solid #ddd; 
   }
 
 .btn-dark {
@@ -136,6 +121,13 @@ section{
       background-color: #065984;
     }
 .table-main td {
+      border: 2px solid #065984 !important;
+    }
+
+.table-ticker td:first-child {
+      background-color: #fff;;
+    }
+.table-ticker td {
       border: 2px solid #065984 !important;
     }
 
@@ -178,6 +170,8 @@ section{
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" >
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -190,6 +184,7 @@ def folio_overview(
     self_contribution, market_value, cash, equities, r_pnl, u_pnl, interest, fees
 ):
     return f"""
+    <small class="text-warning mb-1 mt-4 fw-bold">Portfolio Overview</small>
     <div class="table-responsive">
         <table class="table text-center table-main">
           <tbody>
@@ -263,11 +258,87 @@ def folio_overview(
 """
 
 
+def folio_ticker_table(folio):
+    folio_ticker_table_html = """
+    <small class="text-warning mb-1 mt-4 fw-bold">Portfolio Tracker</small>
+    <div class="table-responsive">
+      <table class="table text-center table-ticker">
+          <thead class="fw-bold text-center">
+              <tr>
+                  <td class="text-dark text-center">
+                      <i class="fa-solid fa-circle-dollar-to-slot text-dark fa-lg"></i>
+                  </td>
+                  <td class="text-center px-2">UNIT COST</td>
+                  <td class="text-center px-2">CURRENT</td>
+              </tr>
+          </thead>  
+          <tbody>
+    """
+
+    for index, row in folio.iterrows():
+        symbol = row["SYMBOL"]
+        unit_cost = get_unit_cost(row["CostBasis"], row["Quantity"])
+        _, _, _, _, current = get_ticker_info(symbol)
+
+        ticker_row = create_ticker_row(symbol, unit_cost, current)
+        folio_ticker_table_html += ticker_row
+
+    folio_ticker_table_html += """
+          </tbody>
+        </table>
+      </div>
+    """
+
+    return folio_ticker_table_html
+
+
+def create_ticker_row(symbol, unit_cost, current_price):
+    return f"""
+  <tr>
+      <!-- First Column -->
+      <td class="text-dark fw-bold text-center">{symbol}</td>
+      
+      <!-- Second Column -->
+      <td class="text-center">
+          <span class="text-white d-inline-block mx-1">
+              <sup> $</sup>{unit_cost}
+          </span>
+      </td>
+      
+      <!-- Third Column -->
+      <td class="text-center">
+          <span class="text-white d-inline-block mx-1">
+              <i class="fa-solid {caret(current_price, unit_cost)} text-{color(current_price, unit_cost)} fa-lg"></i>
+              <sup> $</sup>{current_price}
+          </span>
+      </td>
+  </tr>
+"""
+
+
+def get_unit_cost(cost_basis, quantity):
+    return np.round(cost_basis / quantity, 2)
+
+
+def color(price_a, price_b):
+    if price_a > price_b:
+        return "success"
+    else:
+        return "danger"
+
+
+def caret(price_a, price_b):
+    if price_a > price_b:
+        return "fa-caret-up"
+    else:
+        return "fa-caret-down"
+
+
 def create_stock_card(
     symbol, description, exchange, quantity, cost_basis, r_pnl, total_cost_basis
 ):
     try:
-        unit_cost = np.round(cost_basis / quantity, 2)
+        unit_cost = get_unit_cost(cost_basis, quantity)
         folio_percent = np.round((cost_basis / total_cost_basis) * 100, 2)
     except ZeroDivisionError:
         unit_cost = 0
@@ -282,12 +353,6 @@ def create_stock_card(
         f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
     )
 
-    def color(price_a, price_b):
-        if price_a > price_b:
-            return "success"
-        else:
-            return "danger"
-
     def red_green(price_a, price_b):
         if price_a > price_b:
             return f"""
@@ -297,18 +362,6 @@ def create_stock_card(
             return f"""
             <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
           """
-
-    def caret(price_a, price_b):
-        if price_a > price_b:
-            return "fa-caret-up"
-        else:
-            return "fa-caret-down"
-
-    def ticker_padding():
-        if current > 9.99:
-            return "px-2 "
-        else:
-            return "px-3 "
 
     def red_yellow(price_a, price_b):
         if price_a > price_b:
@@ -327,8 +380,8 @@ def create_stock_card(
                 <div class="col-4 d-flex align-items-start">  
                   <span class="text-white d-inline-block mx-1">
                     <i class="fa-solid {caret(current, unit_cost)} text-{color(current, unit_cost)} fa-lg"></i>
-                  <sup> $</sup>{current}
-                </span>
+                    <sup> $</sup>{current}
+                  </span>
                 </div>
                 <div class="col-8">
                     <span class="d-inline-block mb-2" style="color: #13ff01 !important; font-size: 18px !important;">
@@ -337,13 +390,13 @@ def create_stock_card(
                 </div>
             </div>
 
-            <div class="d-flex align-items-center justify-content-center mb-3">
+            <div class="d-flex align-items-center justify-content-center mb-5">
                 <div class="col-4">                  
                   <img src="{ticker_icon}" width="100" class="me-3">
                 </div>
                 <div class="col-8">
                     <h2 class="mb-0 mt-1">{symbol}</h3>
-                    <p class="m-0">{description}</p>
+                    <p class="m-0 px-2">{description}</p>
                     <small class="text-warning mb-1 fw-bold">{exchange}</small>
                 </div>
             </div>
@@ -443,10 +496,8 @@ def create_stock_card(
 
 
 def stock_cards(folio, total_cost_basis):
-    """
-    Generates HTML cards for each stock in the folio DataFrame.
-    """
     cards_html = """
+    <small class="text-warning mb-1 mt-2 fw-bold">Individual Stock Cards</small>
     <section>
       <div class="container-fluid">
         <div class="container">
@@ -470,32 +521,6 @@ def stock_cards(folio, total_cost_basis):
         </div>
       </div>
     </section>
-
-    <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">
-  Launch demo modal
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
     """
 
     return cards_html

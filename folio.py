@@ -87,6 +87,11 @@ def main():
                     ),
                     padding=False,
                 )
+
+                gr.HTML(
+                    folio_ticker_table(portfolio),
+                    padding=False,
+                )
                 gr.HTML(stock_cards(portfolio, self_contribution), padding=False)
 
             with gr.Tab(GROWTH):
