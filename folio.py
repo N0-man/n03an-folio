@@ -1,15 +1,26 @@
 import gradio as gr
 from folio_service import *
 from style_components import *
+import os
 
 IB = "IB"
 GROWTH = "Growth"
 EMERGING = "Emerging"
 DIVIDENT = "Divident"
+passkey = os.getenv("PASSCODE")
 
+
+def handle_passcode(passcode):
+    if passcode == passkey:
+        return gr.Textbox(visible=False), gr.Button(visible=False), gr.Tabs(visible=True)
+    else:
+        raise gr.Error(
+                "That looks like a fart 💨. Are you who you are?",
+                duration=10,
+            )
+        # return gr.Textbox(visible=True), gr.Button(visible=True), gr.Tabs(visible=False)
 
 def main():
-    gr.set_static_paths(paths=["static/ticker_icons/"])
     theme = gr.themes.Soft(
         primary_hue="rose",
         secondary_hue="yellow",
@@ -51,7 +62,7 @@ def main():
                 """
                 )
 
-        with gr.Tabs(visible=True, selected=IB):
+        with gr.Tabs(visible=False, selected=IB) as folio_tabs:
             with gr.Tab(IB, id=IB, elem_id="main-folio-tab"):
                 gr.HTML(
                     folio_overview(
@@ -80,7 +91,20 @@ def main():
                 """
                 # n03an's folio
                 """)
-    folio.launch(allowed_paths=["static/ticker_icons/"])
+
+        with gr.Row():
+            with gr.Column(scale=2):
+                passcode = gr.Textbox(
+                    placeholder="enter your passcode",
+                    show_label = False,
+                    type="password"
+                )
+            with gr.Column():
+                submit = gr.Button("Submit", interactive=True)
+
+        submit.click(fn = handle_passcode, inputs=[passcode], outputs=[passcode, submit, folio_tabs])
+
+    folio.launch()
 
 
 if __name__ == "__main__":
