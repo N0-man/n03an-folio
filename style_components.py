@@ -269,11 +269,11 @@ def create_stock_card(
         f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
     )
 
-    # def red_green(price_a, price_b):
-    #     if price_a > price_b:
-    #         return "success"
-    #     else:
-    #         return "danger"
+    def color(price_a, price_b):
+        if price_a > price_b:
+            return "success"
+        else:
+            return "danger"
 
     def red_green(price_a, price_b):
         if price_a > price_b:
@@ -297,6 +297,18 @@ def create_stock_card(
         else:
             return "fa-caret-down"
 
+    def caret(price_a, price_b):
+        if price_a > price_b:
+            return "fa-caret-up"
+        else:
+            return "fa-caret-down"
+
+    def ticker_padding():
+        if current > 9.99:
+            return "px-2 "
+        else:
+            return "px-3 "
+
     def red_yellow(price_a, price_b):
         if price_a > price_b:
             return f"""
@@ -312,9 +324,10 @@ def create_stock_card(
         <div class="card text-center p-3">
             <div class="d-flex align-items-center justify-content-center mb-3">
                 <div class="col-4 d-flex align-items-start">  
-                  <span class="bg-dark p-1 rounded text-{ticker_color()} d-inline-block mb-2 fw-bold">
-                    <i class="fa-solid {ticker_caret()} text-{ticker_color()} fa-lg"></i> ${current}
-                  </span>
+                  <span class="bg-dark p-1 {ticker_padding()} rounded text-white d-inline-block mx-1">
+                    <i class="fa-solid {caret(current, unit_cost)} text-{color(current, unit_cost)} fa-lg"></i>
+                  <sup> $</sup>{current}
+                </span>
                 </div>
                 <div class="col-8">
                     <span class="bg-dark p-1 px-4 rounded text-white d-inline-block mb-2">
@@ -334,14 +347,34 @@ def create_stock_card(
                 </div>
             </div>
             <div class="d-flex align-items-center mb-3">
-                <span class="text-warning mx-2">52W:</span>
-                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{fifty_two_low}</small>
-                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{fifty_two_high}</small>
+                <span class="text-warning mx-2 fw-bold">TIME</span>
+                <span class="text-dark mx-2 fw-bold px-1">|</span>
+                <span class="text-white mx-2 fw-bold">LOW</span>
+                <span class="text-dark mx-2 fw-bold px-1">|</span>
+                <span class="text-white mx-2 fw-bold">HIGH</span>
             </div>
             <div class="d-flex align-items-center mb-3">
-                <span class="text-warning mx-2">Day:</span>
-                <small class="bg-success p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{day_low}</small>
-                <small class="bg-danger p-1 px-4 rounded text-white d-inline-block mx-1 fw-bold">{day_high}</small>
+                <span class="text-warning mx-2">52W</span>
+                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                  <i class="fa-solid {caret(fifty_two_low, current)} text-{color(fifty_two_low, current)} fa-lg"></i>
+                  <sup> $</sup>{fifty_two_low}
+                </span>
+                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                  <i class="fa-solid {caret(fifty_two_high, current)} text-{color(fifty_two_high, current)} fa-lg"></i>
+                  <sup> $</sup>{fifty_two_high}
+                </span>
+            </div>
+            <div class="d-flex align-items-center mb-3">
+                <span class="text-warning mx-2">Day</span>
+                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                  <i class="fa-solid {caret(day_low, current)} text-{color(day_low, current)} fa-lg"></i>
+                  <sup> $</sup>{day_low}
+                </span>
+                <span class="bg-dark p-1 px-3 rounded text-white d-inline-block mx-1">
+                  <i class="fa-solid {caret(day_high, current)} text-{color(day_high, current)} fa-lg"></i>
+                  <sup> $</sup>{day_high}
+                </span>
+
             </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-dark-border">
