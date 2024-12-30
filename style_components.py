@@ -186,66 +186,57 @@ def folio_overview(
         <table class="table text-center table-main">
           <tbody>
             <tr>
-              <td>Self Contribution</td>
+              <td class="px-2"><i class="fa-solid fa-cart-shopping me-2"></i>Self Contribution</td>
               <td class="px-2">
-                <i class="fa-solid fa-cart-shopping me-2"></i>
-                <span class="bg-info p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{self_contribution}</span>
-              </td>
-                
-            </tr>
-            
-            <tr>
-              <td>Market Value</td>
-              <td class="px-2">
-                <i class="fa-solid fa-earth-americas me-2"></i>
-                <span class="bg-warning p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{market_value}</span>
+                <span class="bg-white p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{self_contribution}</span>
               </td>
             </tr>
             
             <tr>
-              <td>Available Cash</td>
+              <td class="px-2"><i class="fa-solid fa-earth-americas me-2"></i>Market Value</td>
               <td class="px-2">
-                <i class="fa-solid fa-hand-holding-dollar me-2"></i>
-                <span class="bg-success p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{cash}</span>
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{market_value}</span>
               </td>
             </tr>
             
             <tr>
-              <td>Equities</td>
+              <td class="px-2"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Available Cash</td>
               <td class="px-2">
-                <i class="fa-solid fa-city me-2"></i>
-                <span class="bg-info p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{equities}</span>
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{cash}</span>
               </td>
             </tr>
             
             <tr>
-              <td>Realised PnL</td>
+              <td class="px-2"><i class="fa-solid fa-city me-2"></i>Equities</td>
               <td class="px-2">
-                <i class="fa-solid fa-thumbs-up me-2"></i>
-                <span class="bg-success p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{r_pnl}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>Unrealised PnL</td>
-              <td class="px-2">
-                <i class="fa-solid fa-face-surprise me-2"></i>
-                <span class="bg-warning p-1 px-2 rounded text-dark d-inline-block"><sup class="text-dark">$</sup>{u_pnl}</span>
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{equities}</span>
               </td>
             </tr>
             
             <tr>
-              <td>Interest</td>
+              <td class="px-2"><i class="fa-solid fa-thumbs-up me-2"></i>Realised PnL</td>
               <td class="px-2">
-                <i class="fa-regular fa-trash-can me-2"></i>
-                <span class="bg-danger p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{interest}</span>
+                <span class="bg-success p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{r_pnl}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-2"><i class="fa-solid fa-face-surprise me-2"></i>Unrealised PnL</td>
+              <td class="px-2">
+                <span class="bg-warning p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{u_pnl}</span>
               </td>
             </tr>
             
             <tr>
-              <td>Fees</td>
+              <td class="px-2"><i class="fa-regular fa-trash-can me-2"></i>Interest</td>
               <td class="px-2">
-                <i class="fa-solid fa-poo me-2"></i>
-                <span class="bg-secondary p-1 px-2 rounded text-white d-inline-block"><sup>$</sup>{fees}</span>
+                <span class="bg-danger p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{interest}</span>
+              </td>
+            </tr>
+            
+            <tr>
+              <td class="px-2"><i class="fa-solid fa-poo me-2"></i>Fees</td>
+              <td class="px-2">
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{fees}</span>
               </td>
             </tr>
             
@@ -356,6 +347,28 @@ def caret(price_a, price_b):
         return "fa-caret-down"
 
 
+def red_green_bg(price_a, price_b):
+    if price_a > price_b:
+        return f"""
+            <span class="bg-success p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+          """
+    else:
+        return f"""
+            <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+          """
+
+
+def red_yellow_bg(price_a, price_b):
+    if price_a > price_b:
+        return f"""
+        <span class="bg-warning p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{price_a}</span>
+      """
+    else:
+        return f"""
+        <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+      """
+
+
 def create_ticker_card(
     symbol, description, exchange, quantity, cost_basis, r_pnl, total_cost_basis
 ):
@@ -372,26 +385,6 @@ def create_ticker_card(
     t_pnl = np.round((u_pnl + r_pnl), 2)
 
     ticker_icon = get_ticker_logo(symbol)
-
-    def red_green(price_a, price_b):
-        if price_a > price_b:
-            return f"""
-            <span class="bg-success p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
-          """
-        else:
-            return f"""
-            <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
-          """
-
-    def red_yellow(price_a, price_b):
-        if price_a > price_b:
-            return f"""
-            <span class="bg-warning p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{price_a}</span>
-          """
-        else:
-            return f"""
-            <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
-          """
 
     ticker_card_html = f"""
     <div class="col-sm-12 col-md-12">
@@ -455,7 +448,7 @@ def create_ticker_card(
                   <tbody>
                     <tr>
                         <td class="table-dark">Market Value</td>
-                        <td class="text-light fw-bold">{red_green(market_value, cost_basis)}</td>
+                        <td class="text-light fw-bold">{red_green_bg(market_value, cost_basis)}</td>
                     </tr>
 
                     <tr>
@@ -482,21 +475,21 @@ def create_ticker_card(
                     <tr>
                         <td class="table-dark">Realised PnL</td>
                         <td class="text-light fw-bold">
-                           {red_green(r_pnl,0)}
+                           {red_green_bg(r_pnl,0)}
                         </td> 
                     </tr>
                     
                     <tr>
                         <td class="table-dark">Unrealised PnL</td>
                         <td class="text-light fw-bold">
-                          {red_yellow(u_pnl,0)}
+                          {red_yellow_bg(u_pnl,0)}
                         </td> 
                     </tr>
                       
                     <tr>
                         <td class="table-dark">Total PnL</td>
                         <td class="text-light fw-bold">
-                           {red_yellow(t_pnl,0)}
+                           {red_yellow_bg(t_pnl,0)}
                         </td> 
                     </tr>
                   </tbody>
