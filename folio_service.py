@@ -230,6 +230,10 @@ def get_ticker_info(symbol):
     )
 
 
+def get_ticker_logo(symbol):
+    return f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
+
+
 def get_market_data(portfolio):
     total_value = 0
     total_u_pnl = 0
@@ -245,6 +249,10 @@ def get_market_data(portfolio):
         total_value += market_value
         total_u_pnl += u_pnl
     return np.round(total_value, 2), np.round(total_u_pnl, 2)
+
+
+def get_unit_cost(cost_basis, quantity):
+    return np.round(cost_basis / quantity, 2)
 
 
 # def table(folio):

@@ -123,10 +123,7 @@ section{
 .table-main td {
       border: 2px solid #065984 !important;
     }
-
-.table-ticker td:first-child {
-      background-color: #fff;;
-    }
+  
 .table-ticker td {
       border: 2px solid #065984 !important;
     }
@@ -265,11 +262,12 @@ def folio_ticker_table(folio):
       <table class="table text-center table-ticker">
           <thead class="fw-bold text-center">
               <tr>
-                  <td class="text-dark text-center">
-                      <i class="fa-solid fa-circle-dollar-to-slot text-dark fa-lg"></i>
+                  <td class="bg-dark text-white text-center">
+                      <i class="fa-solid fa-circle-dollar-to-slot fa-2x"></i>
                   </td>
-                  <td class="text-center px-2">UNIT COST</td>
-                  <td class="text-center px-2">CURRENT</td>
+                  <td class="bg-dark text-white text-center px-2">TODAY</td>
+                  <td class="bg-dark text-white text-center px-2">MY FOLIO</td>
+                  <td class="bg-dark text-white text-center px-2">52W H/L</td>
               </tr>
           </thead>  
           <tbody>
@@ -278,9 +276,11 @@ def folio_ticker_table(folio):
     for index, row in folio.iterrows():
         symbol = row["SYMBOL"]
         unit_cost = get_unit_cost(row["CostBasis"], row["Quantity"])
-        _, _, _, _, current = get_ticker_info(symbol)
+        fiftytwohigh, fiftytwolow, _, _, current = get_ticker_info(symbol)
 
-        ticker_row = create_ticker_row(symbol, unit_cost, current)
+        ticker_row = create_ticker_table_row(
+            symbol, unit_cost, current, fiftytwohigh, fiftytwolow, row["Quantity"]
+        )
         folio_ticker_table_html += ticker_row
 
     folio_ticker_table_html += """
@@ -292,32 +292,54 @@ def folio_ticker_table(folio):
     return folio_ticker_table_html
 
 
-def create_ticker_row(symbol, unit_cost, current_price):
+def create_ticker_table_row(
+    symbol, unit_cost, current_price, fiftytwohigh, fiftytwolow, quantity
+):
     return f"""
   <tr>
       <!-- First Column -->
-      <td class="text-dark fw-bold text-center">{symbol}</td>
-      
-      <!-- Second Column -->
-      <td class="text-center">
-          <span class="text-white d-inline-block mx-1">
-              <sup> $</sup>{unit_cost}
-          </span>
+      <td class="text-dark py-md-4 fw-bold text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+              <img src="{get_ticker_logo(symbol)}" width="20" class="mb-2 mb-md-0 me-0 me-md-3">
+              <span>{symbol}</span>
+          </div>
       </td>
       
-      <!-- Third Column -->
-      <td class="text-center">
-          <span class="text-white d-inline-block mx-1">
-              <i class="fa-solid {caret(current_price, unit_cost)} text-{color(current_price, unit_cost)} fa-lg"></i>
-              <sup> $</sup>{current_price}
-          </span>
+      <td class="px-1 pb-2 py-md-4 text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+              <i class="fa-solid {caret(current_price, unit_cost)} text-{color(current_price, unit_cost)} fa-lg mb-1 mb-md-0 me-0 me-md-1 mt-2 mt-md-0"></i>
+              <span class="text-white d-inline-block">
+                  <sup>$</sup>{current_price}
+              </span>
+          </div>
       </td>
+      <td class="px-1 pb-1 py-md-4 text-center">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center text-center">
+          <div class="d-flex flex-row align-items-center justify-content-center mb-2 mb-md-0 me-0 me-md-2">
+              <span class="d-inline-block me-2" style="color: #13ff01 !important; font-size: 14px !important;">
+                  {quantity}
+              </span>
+              <i class="fa-solid fa-piggy-bank" style="color: #ea8dad !important;"></i>
+          </div>
+          <span class="text-white d-inline-block">
+              <sup>$</sup>{unit_cost}
+          </span>
+        </div>
+      </td>
+      
+      <td class="px-1 py-1 py-md-4 text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center h-100">
+              <small class="bg-success p-1 px-2 rounded text-white d-inline-block mb-2 mb-md-0 me-0 me-md-2">
+                  <sup class="text-white">$</sup>{fiftytwohigh}
+              </small>
+              <small class="bg-danger p-1 px-2 rounded text-white d-inline-block">
+                  <sup class="text-white">$</sup>{fiftytwolow}
+              </small>
+          </div>
+      </td>
+
   </tr>
 """
-
-
-def get_unit_cost(cost_basis, quantity):
-    return np.round(cost_basis / quantity, 2)
 
 
 def color(price_a, price_b):
@@ -334,7 +356,7 @@ def caret(price_a, price_b):
         return "fa-caret-down"
 
 
-def create_stock_card(
+def create_ticker_card(
     symbol, description, exchange, quantity, cost_basis, r_pnl, total_cost_basis
 ):
     try:
@@ -349,9 +371,7 @@ def create_stock_card(
     u_pnl = np.round((market_value - cost_basis), 2)
     t_pnl = np.round((u_pnl + r_pnl), 2)
 
-    ticker_icon = (
-        f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
-    )
+    ticker_icon = get_ticker_logo(symbol)
 
     def red_green(price_a, price_b):
         if price_a > price_b:
@@ -373,7 +393,7 @@ def create_stock_card(
             <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
           """
 
-    card_html = f"""
+    ticker_card_html = f"""
     <div class="col-sm-12 col-md-12">
         <div class="card text-center p-3">
             <div class="d-flex align-items-center justify-content-center mb-3">
@@ -492,11 +512,11 @@ def create_stock_card(
         </div>
     </div>
     """
-    return card_html
+    return ticker_card_html
 
 
-def stock_cards(folio, total_cost_basis):
-    cards_html = """
+def ticker_cards(folio, total_cost_basis):
+    html = """
     <small class="text-warning mb-1 mt-2 fw-bold">Individual Stock Cards</small>
     <section>
       <div class="container-fluid">
@@ -505,7 +525,7 @@ def stock_cards(folio, total_cost_basis):
     """
 
     for index, row in folio.iterrows():
-        card_html = create_stock_card(
+        card_html = create_ticker_card(
             row["SYMBOL"],
             row["Description"],
             row["Exchange"],
@@ -514,16 +534,16 @@ def stock_cards(folio, total_cost_basis):
             row["PnL"],
             total_cost_basis,
         )
-        cards_html += card_html
+        html += card_html
 
-    cards_html += """
+    html += """
           </div>
         </div>
       </div>
     </section>
     """
 
-    return cards_html
+    return html
 
 
 def modal(symbol):

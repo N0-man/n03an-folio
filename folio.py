@@ -92,7 +92,7 @@ def main():
                     folio_ticker_table(portfolio),
                     padding=False,
                 )
-                gr.HTML(stock_cards(portfolio, self_contribution), padding=False)
+                gr.HTML(ticker_cards(portfolio, self_contribution), padding=False)
 
             with gr.Tab(GROWTH):
                 gr.Markdown(
