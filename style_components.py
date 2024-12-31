@@ -281,16 +281,25 @@ def folio_ticker_table(portfolio):
                   </td>
                   <td class="bg-dark text-white text-center px-2">TODAY</td>
                   <td class="bg-dark text-white text-center px-2">
-                    MY FOLIO
-                    <span class="d-inline-block fw-normal" style="color: #13ff01 !important; font-size: 12px !important;">
-                        Count
-                    </span>
-                    <span class="d-inline-block text-warning fw-normal" style="font-size: 12px !important;">
-                        (%)
-                    </span>
-                    <span class="d-inline-block text-white fw-normal" style="font-size: 12px !important;">
-                        Price
-                    </span>
+
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center text-center">
+                      <span class="text-white d-inline-block mx-md-2">
+                          MY FOLIO
+                      </span>
+                      <div class="d-flex flex-row align-items-center justify-content-center">
+                          <span class="d-inline-block fw-normal" style="color: #13ff01 !important; font-size: 12px !important;">
+                              Count
+                          </span>
+                          <span class="d-inline-block text-warning fw-normal" style="font-size: 12px !important;">
+                              (%)
+                          </span>
+                          <span class="d-inline-block text-white fw-normal" style="font-size: 12px !important;">
+                              Price
+                          </span>
+                      </div>
+                    </div>
+                    
+                    
                   </td>
                   <td class="bg-dark text-white text-center px-2">52W H/L</td>
               </tr>
