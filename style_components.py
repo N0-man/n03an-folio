@@ -182,7 +182,7 @@ def folio_overview(
 ):
     return f"""
     <small class="text-warning mb-1 mt-4 fw-bold">Portfolio Overview</small>
-    <div class="table-responsive">
+    <div class="table-responsive mb-4">
         <table class="table text-center table-main">
           <tbody>
             <tr>
@@ -246,10 +246,10 @@ def folio_overview(
 """
 
 
-def folio_ticker_table(folio):
+def folio_ticker_table(portfolio):
     folio_ticker_table_html = """
     <small class="text-warning mb-1 mt-4 fw-bold">Portfolio Tracker</small>
-    <div class="table-responsive">
+    <div class="table-responsive mb-4">
       <table class="table text-center table-ticker">
           <thead class="fw-bold text-center">
               <tr>
@@ -264,13 +264,14 @@ def folio_ticker_table(folio):
           <tbody>
     """
 
-    for index, row in folio.iterrows():
-        symbol = row["SYMBOL"]
-        unit_cost = get_unit_cost(row["CostBasis"], row["Quantity"])
-        fiftytwohigh, fiftytwolow, _, _, current = get_ticker_info(symbol)
-
+    for index, row in portfolio.iterrows():
         ticker_row = create_ticker_table_row(
-            symbol, unit_cost, current, fiftytwohigh, fiftytwolow, row["Quantity"]
+            row["SYMBOL"],
+            row["UnitCost"],
+            row["Current"],
+            row["52High"],
+            row["52Low"],
+            row["Quantity"],
         )
         folio_ticker_table_html += ticker_row
 
@@ -334,57 +335,57 @@ def create_ticker_table_row(
 
 
 def color(price_a, price_b):
-    if price_a > price_b:
-        return "success"
-    else:
-        return "danger"
+    return np.where(price_a > price_b, "success", "danger")
 
 
 def caret(price_a, price_b):
-    if price_a > price_b:
-        return "fa-caret-up"
-    else:
-        return "fa-caret-down"
+    return np.where(price_a > price_b, "fa-caret-up", "fa-caret-down")
 
 
 def red_green_bg(price_a, price_b):
-    if price_a > price_b:
-        return f"""
+    return np.where(
+        price_a > price_b,
+        f"""
             <span class="bg-success p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
-          """
-    else:
-        return f"""
+          """,
+        f"""
             <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
-          """
+          """,
+    )
 
 
 def red_yellow_bg(price_a, price_b):
-    if price_a > price_b:
-        return f"""
-        <span class="bg-warning p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{price_a}</span>
-      """
-    else:
-        return f"""
-        <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
-      """
+    return np.where(
+        price_a > price_b,
+        f"""
+            <span class="bg-warning p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{price_a}</span>
+          """,
+        f"""
+            <span class="bg-danger p-1 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{price_a}</span>
+          """,
+    )
 
 
-def create_ticker_card(
-    symbol, description, exchange, quantity, cost_basis, r_pnl, total_cost_basis
-):
-    try:
-        unit_cost = get_unit_cost(cost_basis, quantity)
-        folio_percent = np.round((cost_basis / total_cost_basis) * 100, 2)
-    except ZeroDivisionError:
-        unit_cost = 0
-        folio_percent = 0
+def create_ticker_card(ticker):
+    unit_cost = ticker["UnitCost"]
+    folio_percent = ticker["FolioPercent"]
+    symbol = ticker["SYMBOL"]
+    description = ticker["Description"]
+    exchange = ticker["Exchange"]
+    quantity = ticker["Quantity"]
+    cost_basis = ticker["CostBasis"]
+    r_pnl = ticker["PnL"]
+    u_pnl = ticker["UPnL"]
+    t_pnl = ticker["TPnL"]
 
-    fifty_two_high, fifty_two_low, day_high, day_low, current = get_ticker_info(symbol)
-    market_value = np.round((quantity * current), 2)
-    u_pnl = np.round((market_value - cost_basis), 2)
-    t_pnl = np.round((u_pnl + r_pnl), 2)
+    fifty_two_high = ticker["52High"]
+    fifty_two_low = ticker["52Low"]
+    day_high = ticker["DayHigh"]
+    day_low = ticker["DayLow"]
+    current = ticker["Current"]
+    market_value = ticker["MarketValue"]
 
-    ticker_icon = get_ticker_logo(symbol)
+    ticker_logo = ticker["Logo"]
 
     ticker_card_html = f"""
     <div class="col-sm-12 col-md-12">
@@ -405,7 +406,7 @@ def create_ticker_card(
 
             <div class="d-flex align-items-center justify-content-center mb-5">
                 <div class="col-4">                  
-                  <img src="{ticker_icon}" width="100" class="me-3">
+                  <img src="{ticker_logo}" width="100" class="me-3">
                 </div>
                 <div class="col-8">
                     <h2 class="mb-0 mt-1">{symbol}</h3>
@@ -508,7 +509,7 @@ def create_ticker_card(
     return ticker_card_html
 
 
-def ticker_cards(folio, total_cost_basis):
+def ticker_cards(portfolio):
     html = """
     <small class="text-warning mb-1 mt-2 fw-bold">Individual Stock Cards</small>
     <section>
@@ -517,16 +518,8 @@ def ticker_cards(folio, total_cost_basis):
           <div class="row">
     """
 
-    for index, row in folio.iterrows():
-        card_html = create_ticker_card(
-            row["SYMBOL"],
-            row["Description"],
-            row["Exchange"],
-            row["Quantity"],
-            row["CostBasis"],
-            row["PnL"],
-            total_cost_basis,
-        )
+    for index, row in portfolio.iterrows():
+        card_html = create_ticker_card(row)
         html += card_html
 
     html += """

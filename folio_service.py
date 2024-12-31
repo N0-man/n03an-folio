@@ -234,21 +234,50 @@ def get_ticker_logo(symbol):
     return f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
 
 
-def get_market_data(portfolio):
-    total_value = 0
+def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
+    total_folio_value = 0
     total_u_pnl = 0
-    for _, row in portfolio.iterrows():
+    for index, row in portfolio.iterrows():
         symbol = row["SYMBOL"]
         quantity = row["Quantity"]
         cost_basis = row["CostBasis"]
-        current_price = yf.Ticker(symbol).info["currentPrice"]
+        fifty_two_high, fifty_two_low, day_high, day_low, current = get_ticker_info(
+            symbol
+        )
+        folio_percent = np.round((cost_basis / principal_invested) * 100, 2)
+        market_value = np.round((quantity * current), 2)
+        u_pnl = np.round((market_value - cost_basis), 2)
 
-        market_value = quantity * current_price
-        u_pnl = market_value - cost_basis
+        portfolio.at[index, "UPnL"] = u_pnl
+        portfolio.at[index, "TPnL"] = np.round((u_pnl + row["PnL"]), 2)
+        portfolio.at[index, "MarketValue"] = market_value
+        portfolio.at[index, "Logo"] = get_ticker_logo(symbol)
+        portfolio.at[index, "UnitCost"] = get_unit_cost(cost_basis, quantity)
+        portfolio.at[index, "Current"] = current
+        portfolio.at[index, "52High"] = fifty_two_high
+        portfolio.at[index, "52Low"] = fifty_two_low
+        portfolio.at[index, "DayHigh"] = day_high
+        portfolio.at[index, "DayLow"] = day_low
 
-        total_value += market_value
+        total_folio_value += market_value
         total_u_pnl += u_pnl
-    return np.round(total_value, 2), np.round(total_u_pnl, 2)
+
+    total_pnl = total_u_pnl + total_r_pnl
+    total_folio_value_w_cash = total_folio_value + available_cash
+
+    for index, row in portfolio.iterrows():
+        folio_percent = np.round(
+            (row["MarketValue"] / total_folio_value_w_cash) * 100, 2
+        )
+        portfolio.at[index, "FolioPercent"] = folio_percent
+
+    return (
+        portfolio,
+        np.round(total_folio_value, 2),
+        np.round(total_folio_value_w_cash, 2),
+        np.round(total_u_pnl, 2),
+        np.round(total_pnl, 2),
+    )
 
 
 def get_unit_cost(cost_basis, quantity):
