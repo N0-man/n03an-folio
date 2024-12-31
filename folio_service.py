@@ -196,8 +196,8 @@ def get_folios():
     portfolio = portfolio.sort_values(by="SYMBOL")
 
     total_pnl = portfolio["PnL"].sum()
-    total_fees = portfolio["Fees"].sum()
-    equities = portfolio["CostBasis"].sum()
+    fees_paid = portfolio["Fees"].sum()
+    equities_cost = portfolio["CostBasis"].sum()
 
     growth_portfolio = categorised_portfolio(portfolio, growth_symbols)
     emerging_portfolio = categorised_portfolio(portfolio, emerging_symbols)
@@ -214,8 +214,8 @@ def get_folios():
         divident_portfolio,
         exited_assets,
         np.round(total_pnl, 2),
-        total_fees,
-        equities,
+        fees_paid,
+        equities_cost,
     )
 
 

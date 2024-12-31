@@ -20,8 +20,8 @@ passkey = os.getenv("PASSCODE")
     divident_portfolio,
     exited_assets,
     total_r_pnl,
-    total_fees,
-    equities,
+    fees_paid,
+    equities_cost,
 ) = get_folios()
 
 available_cash, principal_invested, interest_recieved = get_cash_details()
@@ -57,14 +57,16 @@ def render_data():
     sync_market_data()
     return (
         folio_overview(
-            principal_invested,
             total_folio_value_w_cash,
+            principal_invested,
+            total_folio_value,
             available_cash,
-            equities,
+            equities_cost,
             total_r_pnl,
             total_u_pnl,
+            total_pnl,
             interest_recieved,
-            total_fees,
+            fees_paid,
         )
         + folio_ticker_table(portfolio)
         + ticker_cards(portfolio)

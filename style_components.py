@@ -178,7 +178,16 @@ section{
 
 
 def folio_overview(
-    self_contribution, market_value, cash, equities, r_pnl, u_pnl, interest, fees
+    total_folio_value_w_cash,
+    principal_invested,
+    total_folio_value,
+    available_cash,
+    equities_cost,
+    total_r_pnl,
+    total_u_pnl,
+    total_pnl,
+    interest_recieved,
+    fees_paid,
 ):
     return f"""
     <small class="text-warning mb-1 mt-4 fw-bold">Portfolio Overview</small>
@@ -186,57 +195,71 @@ def folio_overview(
         <table class="table text-center table-main">
           <tbody>
             <tr>
-              <td class="px-2"><i class="fa-solid fa-cart-shopping me-2"></i>Self Contribution</td>
+              <td class="px-2"><i class="fa-solid fa-piggy-bank me-2 fw-bold" style="color: #ea8dad !important;"></i></i>Total Value</td>
               <td class="px-2">
-                <span class="bg-white p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{self_contribution}</span>
+                <span class="p-1 px2 w-100 rounded text-dark d-inline-block mb-2 fw-bold" style="background: #13ff01 !important;"><sup class="text-dark">$</sup>{total_folio_value_w_cash}</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-2"><i class="fa-solid fa-cart-shopping me-2" style="color: #8aebfe !important;"></i>Principal Invested</td>
+              <td class="px-2">
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{principal_invested}</span>
               </td>
             </tr>
             
             <tr>
-              <td class="px-2"><i class="fa-solid fa-earth-americas me-2"></i>Market Value</td>
+              <td class="px-2"><i class="fa-solid fa-chart-line me-2" style="color: #8aebfe !important;"></i>Equities Value</td>
               <td class="px-2">
-                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{market_value}</span>
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{total_folio_value}</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-2"><i class="fa-solid fa-house-flag me-2" style="color: #8aebfe !important;"></i>Equities Cost</td>
+              <td class="px-2">
+                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{equities_cost}</span>
               </td>
             </tr>
             
             <tr>
-              <td class="px-2"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Available Cash</td>
+              <td class="px-2"><i class="fa-solid fa-money-check-dollar me-2" style="color: #4fcb41 !important;"></i>Available Cash</td>
               <td class="px-2">
-                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{cash}</span>
+                <span class="bg-success p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup>$</sup>{available_cash}</span>
               </td>
             </tr>
             
             <tr>
-              <td class="px-2"><i class="fa-solid fa-city me-2"></i>Equities</td>
+              <td class="px-2"><i class="fa-solid fa-arrow-trend-up me-2" style="color: #4fcb41 !important;"></i>Realised PnL</td>
               <td class="px-2">
-                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{equities}</span>
+                <span class="bg-success p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{total_r_pnl}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="px-2"><i class="fa-solid fa-face-surprise me-2" style="color: #e1d400 !important;"></i>Unrealised PnL</td>
+              <td class="px-2">
+                <span class="bg-warning p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{total_u_pnl}</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="px-2"><i class="fa-solid fa-money-bill-trend-up me-2" style="color: #e1d400 !important;"></i>Total PnL</td>
+              <td class="px-2">
+                <span class="bg-warning p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{total_pnl}</span>
               </td>
             </tr>
             
             <tr>
-              <td class="px-2"><i class="fa-solid fa-thumbs-up me-2"></i>Realised PnL</td>
+              <td class="px-2"><i class="fa-regular fa-trash-can me-2" style="color: #ff5353 !important;"></i>Interest Gained</td>
               <td class="px-2">
-                <span class="bg-success p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{r_pnl}</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="px-2"><i class="fa-solid fa-face-surprise me-2"></i>Unrealised PnL</td>
-              <td class="px-2">
-                <span class="bg-warning p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{u_pnl}</span>
+                <span class="bg-danger p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{interest_recieved}</span>
               </td>
             </tr>
             
             <tr>
-              <td class="px-2"><i class="fa-regular fa-trash-can me-2"></i>Interest</td>
+              <td class="px-2"><i class="fa-solid fa-poo me-2" style="color: #000000 !important;"></i>Fees Paid</td>
               <td class="px-2">
-                <span class="bg-danger p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{interest}</span>
-              </td>
-            </tr>
-            
-            <tr>
-              <td class="px-2"><i class="fa-solid fa-poo me-2"></i>Fees</td>
-              <td class="px-2">
-                <span class="bg-info p-1 px2 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{fees}</span>
+                <span class="bg-dark p-1 px2 w-100 rounded text-white d-inline-block mb-2"><sup class="text-white">$</sup>{fees_paid}</span>
               </td>
             </tr>
             
@@ -257,7 +280,18 @@ def folio_ticker_table(portfolio):
                       <i class="fa-solid fa-circle-dollar-to-slot fa-2x"></i>
                   </td>
                   <td class="bg-dark text-white text-center px-2">TODAY</td>
-                  <td class="bg-dark text-white text-center px-2">MY FOLIO</td>
+                  <td class="bg-dark text-white text-center px-2">
+                    MY FOLIO
+                    <span class="d-inline-block fw-normal" style="color: #13ff01 !important; font-size: 12px !important;">
+                        Count
+                    </span>
+                    <span class="d-inline-block text-warning fw-normal" style="font-size: 12px !important;">
+                        (%)
+                    </span>
+                    <span class="d-inline-block text-white fw-normal" style="font-size: 12px !important;">
+                        Price
+                    </span>
+                  </td>
                   <td class="bg-dark text-white text-center px-2">52W H/L</td>
               </tr>
           </thead>  
@@ -300,8 +334,8 @@ def create_ticker_table_row(
       
       <td class="px-1 pb-2 py-md-4 text-center">
           <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
-              <i class="fa-solid {caret(current_price, unit_cost)} text-{color(current_price, unit_cost)} fa-lg mb-1 mb-md-0 me-0 me-md-1 mt-2 mt-md-0"></i>
-              <span class="text-white d-inline-block">
+              <i class="fa-solid {arrow(current_price, unit_cost)} text-{color(current_price, unit_cost)} fa-lg mb-1 mb-md-0 me-0 me-md-1 mt-2 mt-md-0"></i>
+              <span class="text-white d-inline-block mt-2">
                   <sup>$</sup>{current_price}
               </span>
           </div>
@@ -343,6 +377,10 @@ def color(price_a, price_b):
 
 def caret(price_a, price_b):
     return np.where(price_a > price_b, "fa-caret-up", "fa-caret-down")
+
+
+def arrow(price_a, price_b):
+    return np.where(price_a > price_b, "fa-arrow-trend-up", "fa-arrow-trend-down")
 
 
 def red_green_bg(price_a, price_b):
@@ -427,22 +465,22 @@ def create_ticker_card(ticker):
             <div class="d-flex align-items-center mb-3">
                 <span class="text-warning mx-2">52W</span>
                 <span class="text-white d-inline-block mx-1 px-2">
-                  <i class="fa-solid {caret(fifty_two_low, current)} text-{color(fifty_two_low, current)} fa-lg"></i>
+                  <i class="fa-solid {arrow(fifty_two_low, current)} text-{color(fifty_two_low, current)} fa-lg"></i>
                   <sup> $</sup>{fifty_two_low}
                 </span>
                 <span class="text-white d-inline-block mx-1 px-2">
-                  <i class="fa-solid {caret(fifty_two_high, current)} text-{color(fifty_two_high, current)} fa-lg"></i>
+                  <i class="fa-solid {arrow(fifty_two_high, current)} text-{color(fifty_two_high, current)} fa-lg"></i>
                   <sup> $</sup>{fifty_two_high}
                 </span>
             </div>
             <div class="d-flex align-items-center mb-3">
                 <span class="text-warning mx-2">DAY</span>
                 <span class="text-white d-inline-block mx-1 px-2">
-                  <i class="fa-solid {caret(day_low, current)} text-{color(day_low, current)} fa-lg"></i>
+                  <i class="fa-solid {arrow(day_low, current)} text-{color(day_low, current)} fa-lg"></i>
                   <sup> $</sup>{day_low}
                 </span>
                 <span class="text-white d-inline-block mx-1 px-2">
-                  <i class="fa-solid {caret(day_high, current)} text-{color(day_high, current)} fa-lg"></i>
+                  <i class="fa-solid {arrow(day_high, current)} text-{color(day_high, current)} fa-lg"></i>
                   <sup> $</sup>{day_high}
                 </span>
 
