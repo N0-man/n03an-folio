@@ -10,7 +10,7 @@ IB = "IB"
 GROWTH = "Growth"
 EMERGING = "Emerging"
 DIVIDENT = "Divident"
-MARKET_DATA_REFRESH = 15  # seconds
+MARKET_DATA_REFRESH = 20  # seconds
 passkey = os.getenv("PASSCODE")
 
 (
