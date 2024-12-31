@@ -1,4 +1,6 @@
-Piedmont Lithium is a lithium mining and processing company focused on developing lithium resources primarily in North America. Their main revenue currently comes from their 25% ownership in the North American Lithium (NAL) operation in Quebec, where they receive a portion of spodumene concentrate production. They are also developing several other projects including Carolina Lithium (US), and have a joint venture interest in the Ewoyaa project in Ghana.
+## Piedmont Lithium (PLL)
+
+_Piedmont Lithium_ is a lithium mining and processing company focused on developing lithium resources primarily in North America. Their main revenue currently comes from their 25% ownership in the North American Lithium (NAL) operation in Quebec, where they receive a portion of spodumene concentrate production. They are also developing several other projects including Carolina Lithium (US), and have a joint venture interest in the Ewoyaa project in Ghana.
 
 ### Acquisition
 

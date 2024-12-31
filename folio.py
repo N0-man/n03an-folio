@@ -3,6 +3,7 @@ from folio_service import *
 from style_components import *
 import os
 from ticker_info import *
+import pandas as pd
 
 import os
 
@@ -11,6 +12,7 @@ GROWTH = "Growth"
 EMERGING = "Emerging"
 DIVIDENT = "Divident"
 MARKET_DATA_REFRESH = 40  # seconds
+TICKER_DATA_REFRESH = 2  # additional 2 seconds to allow market data refresh
 passkey = os.getenv("PASSCODE")
 
 (
@@ -73,6 +75,54 @@ def render_data():
     )
 
 
+def render_ticker_tab(ticker):
+    return ticker_cards(pd.DataFrame([ticker]))
+
+
+# def render_ticker_info(symbol):
+#     with open(f"static/{symbol}.md", "rb") as file:
+#         raw = file.read()
+#     raw_str = raw.decode("utf-8")
+#     return raw_str
+
+
+# def render_ticker_info(symbol):
+#     file_path = f"static/ticker_info/{symbol}.md"
+#     try:
+#         logo = f"![{symbol}](https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png)"
+#         with open(file_path, "rb") as file:
+#             raw_str = file.read()
+#     except FileNotFoundError:
+#         logo = f"![{symbol}](https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png)"
+#         raw_str = f"## {symbol}"
+#         with open(file_path, "w", encoding="utf-8") as file:
+#             file.write(raw_str)
+#     return logo + "<br><br>" + raw_str
+
+
+def render_ticker_info(symbol):
+    file_path = f"static/ticker_info/{symbol}.md"
+    default_logo = f"![{symbol}](https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png)"
+    logo = f"![{symbol}](https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png)"
+
+    try:
+        # Try to read the file
+        with open(file_path, "r", encoding="utf-8") as file:
+            content = file.read()
+    except FileNotFoundError:
+        # If file not found, create new content
+        content = f"## {symbol}"
+        logo = default_logo  # Fallback logo
+        os.makedirs(
+            os.path.dirname(file_path), exist_ok=True
+        )  # Ensure the directory exists
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(content)
+
+    # Return formatted markdown
+    return f"\n{logo}\n\n{content}"
+
+
 def main():
     theme = gr.themes.Soft(
         primary_hue="rose",
@@ -106,21 +156,19 @@ def main():
         with gr.Tabs(visible=False, selected=IB) as folio_tabs:
             with gr.Tab(IB, id=IB, elem_id="main-folio-tab"):
                 gr.HTML(value=render_data, every=MARKET_DATA_REFRESH, padding=False)
-
-            with gr.Tab(GROWTH):
-                gr.Markdown(
-                    """
-                # n03an's folio
-                """
-                )
-            with gr.Tab(EMERGING):
-                gr.Label("Hello World", elem_classes="dancing")
-            with gr.Tab(DIVIDENT):
-                gr.Markdown(
-                    """
-                # n03an's folio
-                """
-                )
+            for _, row in portfolio.iterrows():
+                symbol = row["SYMBOL"]
+                with gr.Tab(symbol):
+                    # gr.HTML(
+                    #     value=render_ticker_tab,
+                    #     every=TICKER_DATA_REFRESH,
+                    #     padding=False,
+                    # )
+                    gr.Markdown(
+                        f"""
+                        {render_ticker_info(symbol)}
+                        """
+                    )
 
         with gr.Row():
             with gr.Column(scale=2):

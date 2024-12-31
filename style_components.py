@@ -546,13 +546,6 @@ def create_ticker_card(ticker):
                   </tbody>
                 </table>
             </div>
-
-            <button class="btn btn-dark text-light border-dark m-3" data-toggle="modal" data-target="#{symbol}">
-                <i class="fa-solid fa-binoculars"></i> {symbol} Details
-            </button>
-            
-            {modal(symbol)}
-
         </div>
     </div>
     """
@@ -580,26 +573,3 @@ def ticker_cards(portfolio):
     """
 
     return html
-
-
-def modal(symbol):
-    return f"""
-  <div class="modal fade" id={symbol} tabindex="-1" role="dialog" aria-labelledby={symbol} aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="{symbol}Title">{symbol}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-"""
