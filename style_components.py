@@ -272,6 +272,7 @@ def folio_ticker_table(portfolio):
             row["52High"],
             row["52Low"],
             row["Quantity"],
+            row["FolioPercent"],
         )
         folio_ticker_table_html += ticker_row
 
@@ -285,7 +286,7 @@ def folio_ticker_table(portfolio):
 
 
 def create_ticker_table_row(
-    symbol, unit_cost, current_price, fiftytwohigh, fiftytwolow, quantity
+    symbol, unit_cost, current_price, fiftytwohigh, fiftytwolow, quantity, folio_percent
 ):
     return f"""
   <tr>
@@ -311,7 +312,9 @@ def create_ticker_table_row(
               <span class="d-inline-block me-2" style="color: #13ff01 !important; font-size: 14px !important;">
                   {quantity}
               </span>
-              <i class="fa-solid fa-piggy-bank" style="color: #ea8dad !important;"></i>
+              <span class="d-inline-block text-warning" style="font-size: 14px !important;">
+                  ({folio_percent}%)
+              </span>
           </div>
           <span class="text-white d-inline-block">
               <sup>$</sup>{unit_cost}
@@ -448,6 +451,12 @@ def create_ticker_card(ticker):
                 <table class="table table-striped table-hover table-dark-border">
                   <tbody>
                     <tr>
+                        <td class="table-dark">Folio %</td>
+                        <td class="text-light fw-bold">
+                           <span class="bg-info p-1 w-100 rounded text-dark d-inline-block mb-2" style="background: #13ff01 !important;"><sup class="text-dark">$</sup>{folio_percent}</span>
+                        </td>   
+                    </tr>
+                    <tr>
                         <td class="table-dark">Market Value</td>
                         <td class="text-light fw-bold">{red_green_bg(market_value, cost_basis)}</td>
                     </tr>
@@ -466,12 +475,6 @@ def create_ticker_card(ticker):
                         </td>                       
                     </tr>
                     
-                    <tr>
-                        <td class="table-dark">Folio %</td>
-                        <td class="text-light fw-bold">
-                           <span class="bg-info p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{folio_percent}</span>
-                        </td>   
-                    </tr>
                     
                     <tr>
                         <td class="table-dark">Realised PnL</td>
