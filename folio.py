@@ -2,14 +2,33 @@ import gradio as gr
 from folio_service import *
 from style_components import *
 import os
-from gradio_modal import Modal
 from ticker_info import *
+
+import os
 
 IB = "IB"
 GROWTH = "Growth"
 EMERGING = "Emerging"
 DIVIDENT = "Divident"
+MARKET_DATA_REFRESH = 15  # seconds
 passkey = os.getenv("PASSCODE")
+
+(
+    portfolio,
+    growth_portfolio,
+    emerging_portfolio,
+    divident_portfolio,
+    exited_assets,
+    total_r_pnl,
+    total_fees,
+    equities,
+) = get_folios()
+
+available_cash, principal_invested, interest_recieved = get_cash_details()
+# Compute portfolio with market data
+portfolio, total_folio_value, total_folio_value_w_cash, total_u_pnl, total_pnl = (
+    get_market_data(portfolio, total_r_pnl, principal_invested, available_cash)
+)
 
 
 def handle_passcode(passcode):
@@ -27,6 +46,31 @@ def handle_passcode(passcode):
         # return gr.Textbox(visible=True), gr.Button(visible=True), gr.Tabs(visible=False)
 
 
+def sync_market_data():
+    global portfolio, total_folio_value, total_folio_value_w_cash, total_u_pnl, total_pnl
+    portfolio, total_folio_value, total_folio_value_w_cash, total_u_pnl, total_pnl = (
+        get_market_data(portfolio, total_r_pnl, principal_invested, available_cash)
+    )
+
+
+def render_data():
+    sync_market_data()
+    return (
+        folio_overview(
+            principal_invested,
+            total_folio_value_w_cash,
+            available_cash,
+            equities,
+            total_r_pnl,
+            total_u_pnl,
+            interest_recieved,
+            total_fees,
+        )
+        + folio_ticker_table(portfolio)
+        + ticker_cards(portfolio)
+    )
+
+
 def main():
     theme = gr.themes.Soft(
         primary_hue="rose",
@@ -36,24 +80,9 @@ def main():
         font=[gr.themes.GoogleFont("Inter"), "sans-serif"],
     )
 
-    (
-        portfolio,
-        growth_portfolio,
-        emerging_portfolio,
-        divident_portfolio,
-        exited_assets,
-        total_r_pnl,
-        total_fees,
-        equities,
-    ) = get_folios()
-
-    available_cash, self_contribution, interest_recieved = get_cash_details()
-    market_value, total_u_pnl = get_market_data(portfolio)
-
-    # with gr.Blocks(theme=gr.themes.Default(font=[gr.themes.GoogleFont("Inconsolata"), "Arial", "sans-serif"]))
     with gr.Blocks(theme=theme, fill_height=True) as folio:
         gr.HTML(load_all_css)
-        with gr.Row(equal_height=False):
+        with gr.Row(equal_height=False) as folio_header:
             with gr.Column(scale=1, min_width=100):
                 gr.Image(
                     "logo.png",
@@ -74,25 +103,7 @@ def main():
 
         with gr.Tabs(visible=False, selected=IB) as folio_tabs:
             with gr.Tab(IB, id=IB, elem_id="main-folio-tab"):
-                gr.HTML(
-                    folio_overview(
-                        self_contribution,
-                        market_value,
-                        available_cash,
-                        equities,
-                        total_r_pnl,
-                        total_u_pnl,
-                        interest_recieved,
-                        total_fees,
-                    ),
-                    padding=False,
-                )
-
-                gr.HTML(
-                    folio_ticker_table(portfolio),
-                    padding=False,
-                )
-                gr.HTML(ticker_cards(portfolio, self_contribution), padding=False)
+                gr.HTML(value=render_data, every=MARKET_DATA_REFRESH, padding=False)
 
             with gr.Tab(GROWTH):
                 gr.Markdown(
