@@ -3,4 +3,4 @@ matplotlib
 numpy
 pandas
 cryptography
-yfinance==0.2.54
+yfinance==0.2.55
