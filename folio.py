@@ -11,8 +11,10 @@ IB = "IB"
 GROWTH = "Growth"
 EMERGING = "Emerging"
 DIVIDENT = "Divident"
-MARKET_DATA_REFRESH = 40  # seconds
-TICKER_DATA_REFRESH = 2  # additional 2 seconds to allow market data refresh
+MARKET_DATA_REFRESH = (
+    3600  # refresh every 60 mins - total refresh time is 50-60 seconds
+)
+# TICKER_DATA_REFRESH = 2  # additional 2 seconds to allow market data refresh
 passkey = os.getenv("PASSCODE")
 
 (
@@ -102,20 +104,16 @@ def render_ticker_tab(ticker):
 
 def render_ticker_info(symbol):
     file_path = f"static/ticker_info/{symbol}.md"
-    default_logo = f"![{symbol}](https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png)"
-    logo = f"![{symbol}](https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png)"
+    # default_logo = f"![{symbol}](https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png)"
+    # logo = f"![{symbol}](https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png)"
+    logo = f"![{symbol}]({get_ticker_logo(symbol)})"
 
     try:
-        # Try to read the file
         with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
     except FileNotFoundError:
-        # If file not found, create new content
         content = f"## {symbol}"
-        logo = default_logo  # Fallback logo
-        os.makedirs(
-            os.path.dirname(file_path), exist_ok=True
-        )  # Ensure the directory exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w", encoding="utf-8") as file:
             file.write(content)
 
