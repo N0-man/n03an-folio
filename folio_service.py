@@ -6,9 +6,15 @@ import pandas as pd
 from cryptography.fernet import Fernet
 import os
 from io import StringIO
-import yfinance as yf
-
+from yahooquery import Ticker
 from datetime import datetime
+
+# import yfinance as yf
+
+# Manually update this based on your portfolio
+growth_symbols = ["VIR", "TSLA", "PLL", "MU", "IREN", "CLSK", "AMD", "BITB", "ALAB"]
+emerging_symbols = ["BTDR", "IRD", "CRMD", "LFMD"]
+divident_symbols = ["MRK", "TSM"]
 
 data = "current_data"
 folio_key = os.getenv("FOLIO_KEY")
@@ -78,7 +84,7 @@ def calculate(symbol):
     orders = trades[
         (trades["Symbol"] == symbol) & (trades["LevelOfDetail"] == "EXECUTION")
     ]
-    cost_basis = orders["CostBasis"].sum()
+    cost_basis = orders[(orders["Buy/Sell"] == "BUY")]["CostBasis"].sum()
     fees = abs(orders["Taxes"].sum()) + abs(orders["IBCommission"].sum())
     pnl = orders[(orders["Buy/Sell"] == "SELL")]["FifoPnlRealized"].sum()
 
@@ -154,9 +160,6 @@ def get_cash_details():
 
 def get_folios():
     symbols = trades[trades["AssetClass"] == "STK"].Symbol.unique()
-    growth_symbols = ["VIR", "TSLA", "PLL", "MU", "IREN", "CLSK", "AMD"]
-    emerging_symbols = ["BTDR", "IRD"]
-    divident_symbols = ["MRK"]
     data = []
 
     for symbol in symbols:
@@ -214,35 +217,42 @@ def get_folios():
         divident_portfolio,
         exited_assets,
         np.round(total_pnl, 2),
-        fees_paid,
-        equities_cost,
+        np.round(fees_paid, 2),
+        np.round(equities_cost, 2),
     )
 
 
-def get_ticker_info(symbol):
-    data = yf.Ticker(symbol).info
+def get_ticker_info(symbol, tickers):
+    tickers_price = tickers.price
+    tickers_summary = tickers.summary_detail
     return (
-        np.round(data["fiftyTwoWeekHigh"], 2),
-        np.round(data["fiftyTwoWeekLow"], 2),
-        np.round(data["dayHigh"], 2),
-        np.round(data["dayLow"], 2),
-        np.round(data["currentPrice"], 2),
+        np.round(tickers_summary[symbol]["fiftyTwoWeekHigh"], 2),
+        np.round(tickers_summary[symbol]["fiftyTwoWeekLow"], 2),
+        np.round(tickers_summary[symbol]["dayHigh"], 2),
+        np.round(tickers_summary[symbol]["dayLow"], 2),
+        np.round(tickers_price[symbol]["regularMarketPrice"], 2),
     )
 
 
 def get_ticker_logo(symbol):
-    return f"https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png"
+    return (
+        f"https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png"
+    )
 
 
 def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
     total_folio_value = 0
     total_u_pnl = 0
+
+    symbols = portfolio["SYMBOL"].tolist()
+    tickers = Ticker(symbols)
+
     for index, row in portfolio.iterrows():
         symbol = row["SYMBOL"]
         quantity = row["Quantity"]
         cost_basis = row["CostBasis"]
         fifty_two_high, fifty_two_low, day_high, day_low, current = get_ticker_info(
-            symbol
+            symbol, tickers
         )
         folio_percent = np.round((cost_basis / principal_invested) * 100, 2)
         market_value = np.round((quantity * current), 2)
@@ -252,7 +262,7 @@ def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
         portfolio.at[index, "TPnL"] = np.round((u_pnl + row["PnL"]), 2)
         portfolio.at[index, "MarketValue"] = market_value
         portfolio.at[index, "Logo"] = get_ticker_logo(symbol)
-        portfolio.at[index, "UnitCost"] = get_unit_cost(cost_basis, quantity)
+        portfolio.at[index, "UnitCost"] = get_unit_cost(cost_basis, row["Total Buy"])
         portfolio.at[index, "Current"] = current
         portfolio.at[index, "52High"] = fifty_two_high
         portfolio.at[index, "52Low"] = fifty_two_low

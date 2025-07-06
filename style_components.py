@@ -500,7 +500,7 @@ def create_ticker_card(ticker):
                     <tr>
                         <td class="table-dark">Folio %</td>
                         <td class="text-light fw-bold">
-                           <span class="bg-info p-1 w-100 rounded text-dark d-inline-block mb-2" style="background: #13ff01 !important;"><sup class="text-dark">$</sup>{folio_percent}</span>
+                           <span class="bg-info p-1 w-100 rounded text-dark d-inline-block mb-2" style="background: #13ff01 !important;"><sup class="text-dark">%</sup>{folio_percent}</span>
                         </td>   
                     </tr>
                     <tr>

@@ -3,4 +3,5 @@ matplotlib
 numpy
 pandas
 cryptography
-yfinance==0.2.55
+yfinance==0.2.64
+yahooquery[premium]
