@@ -310,7 +310,7 @@ def folio_ticker_table(portfolio):
     for index, row in portfolio.iterrows():
         ticker_row = create_ticker_table_row(
             row["SYMBOL"],
-            row["UnitCost"],
+            row["UnitPrice"],
             row["Current"],
             row["52High"],
             row["52Low"],
@@ -336,7 +336,7 @@ def create_ticker_table_row(
       <!-- First Column -->
       <td class="text-dark py-md-4 fw-bold text-center">
           <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
-              <img src="{get_ticker_logo(symbol)}" width="20" class="mb-2 mb-md-0 me-0 me-md-3">
+              <img src="{get_logo(symbol)}" width="20" class="mb-2 mb-md-0 me-0 me-md-3">
               <span>{symbol}</span>
           </div>
       </td>
@@ -380,6 +380,79 @@ def create_ticker_table_row(
 """
 
 
+def create_exited_asset_table_row(symbol, buy, description, pnl):
+    return f"""
+  <tr>
+      <!-- First Column -->
+      <td class="text-dark py-md-4 fw-bold text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+              <img src="{get_logo(symbol)}" width="20" class="mb-2 mb-md-0 me-0 me-md-3">
+              <span>{symbol}</span>
+          </div>
+      </td>
+      
+      <td class="px-1 pb-2 py-md-4 text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+              <span class="text-white d-inline-block mt-2">
+                  {description}
+              </span>
+          </div>
+      </td>
+      <td class="px-1 pb-2 py-md-4 text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+              <span>{buy}</span>
+          </div>
+      </td>
+      
+      <td class="px-1 pb-2 py-md-4 text-center">
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+              <span class="text-white rounded mt-2 d-inline-block px-2 py-1 {'bg-danger' if pnl < 0 else 'bg-success'}">
+                  <sup>$</sup>{pnl}
+              </span>
+          </div>
+      </td>
+
+  </tr>
+"""
+
+
+def folio_exited_assets(exited_assets):
+    exited_assets_table_html = """
+    <hr style="border-top: 4px #065984; margin: 20px 0;">
+    <small class="text-warning mb-1 mt-4 fw-bold">Exited Assets</small>
+    <div class="table-responsive mb-4">
+      <table class="table text-center table-ticker">
+          <thead class="fw-bold text-center">
+              <tr>
+                  <td class="bg-dark text-white text-center">
+                      <i class="fa-solid fa-circle-dollar-to-slot fa-2x"></i>
+                  </td>
+                  <td class="bg-dark text-white text-center px-2">Description</td>
+                  <td class="bg-dark text-white text-center px-2">Trade Quantity</td>
+                  <td class="bg-dark text-white text-center px-2">PnL</td>
+              </tr>
+          </thead>  
+          <tbody>
+    """
+
+    for index, row in exited_assets.iterrows():
+        ticker_row = create_exited_asset_table_row(
+            row["SYMBOL"],
+            row["Total Buy"],
+            row["Description"],
+            row["PnL"],
+        )
+        exited_assets_table_html += ticker_row
+
+    exited_assets_table_html += """
+          </tbody>
+        </table>
+      </div>
+    """
+
+    return exited_assets_table_html
+
+
 def color(price_a, price_b):
     return np.where(price_a > price_b, "success", "danger")
 
@@ -417,7 +490,7 @@ def red_yellow_bg(price_a, price_b):
 
 
 def create_ticker_card(ticker):
-    unit_cost = ticker["UnitCost"]
+    unit_price = ticker["UnitPrice"]
     folio_percent = ticker["FolioPercent"]
     symbol = ticker["SYMBOL"]
     description = ticker["Description"]
@@ -443,7 +516,7 @@ def create_ticker_card(ticker):
             <div class="d-flex align-items-center justify-content-center mb-3">
                 <div class="col-4 d-flex align-items-start">  
                   <span class="text-white d-inline-block mx-1">
-                    <i class="fa-solid {caret(current, unit_cost)} text-{color(current, unit_cost)} fa-lg"></i>
+                    <i class="fa-solid {caret(current, unit_price)} text-{color(current, unit_price)} fa-lg"></i>
                     <sup> $</sup>{current}
                   </span>
                 </div>
@@ -518,7 +591,7 @@ def create_ticker_card(ticker):
                     <tr>
                         <td class="table-dark">Average Price</td>
                         <td class="text-light fw-bold">
-                           <span class="bg-white p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{unit_cost}</span>
+                           <span class="bg-white p-1 w-100 rounded text-dark d-inline-block mb-2"><sup class="text-dark">$</sup>{unit_price}</span>
                         </td>                       
                     </tr>
                     

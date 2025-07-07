@@ -8,6 +8,7 @@ import os
 from io import StringIO
 from yahooquery import Ticker
 from datetime import datetime
+import requests
 
 # import yfinance as yf
 
@@ -15,6 +16,9 @@ from datetime import datetime
 growth_symbols = ["VIR", "TSLA", "PLL", "MU", "IREN", "CLSK", "AMD", "BITB", "ALAB"]
 emerging_symbols = ["BTDR", "IRD", "CRMD", "LFMD"]
 divident_symbols = ["MRK", "TSM"]
+
+# Manually update this based future acquisitions
+acquisitions = [["IRD", "OCUP"]]
 
 data = "current_data"
 folio_key = os.getenv("FOLIO_KEY")
@@ -74,21 +78,23 @@ def get_positions():
 
 def get_trades():
     trades = decrypt(f"{data}/TRNT.csv")
+
+    # squash aquisition
+    for SYMBOL, OLD_SYMBOL in acquisitions:
+        # replace with get_info
+        row = trades[
+            (trades["Symbol"] == SYMBOL) & (trades["LevelOfDetail"] == "EXECUTION")
+        ].iloc[0]
+        description, exchange = row["Description"], row["ListingExchange"]
+
+        trades.loc[trades["Symbol"] == OLD_SYMBOL, "Description"] = description
+        trades.loc[trades["Symbol"] == OLD_SYMBOL, "ListingExchange"] = exchange
+        trades.loc[trades["Symbol"] == OLD_SYMBOL, "Symbol"] = SYMBOL
+
     return trades
 
 
 trades = get_trades()
-
-
-def calculate(symbol):
-    orders = trades[
-        (trades["Symbol"] == symbol) & (trades["LevelOfDetail"] == "EXECUTION")
-    ]
-    cost_basis = orders[(orders["Buy/Sell"] == "BUY")]["CostBasis"].sum()
-    fees = abs(orders["Taxes"].sum()) + abs(orders["IBCommission"].sum())
-    pnl = orders[(orders["Buy/Sell"] == "SELL")]["FifoPnlRealized"].sum()
-
-    return np.round(cost_basis, 2), np.round(pnl, 2), np.round(fees, 2)
 
 
 def get_info(symbol):
@@ -98,41 +104,48 @@ def get_info(symbol):
     return row["Description"], row["ListingExchange"]
 
 
-def buy_sell_trades(symbol):
+def calculate_portfolio_from_trades(symbol):
     orders = trades[
         (trades["Symbol"] == symbol) & (trades["LevelOfDetail"] == "EXECUTION")
     ]
+
+    orders_sorted = orders.sort_values(by="OrderTime")
+
+    total_quantity = 0.0
+    total_cost_basis = 0.0
+    total_pnl = 0.0
+
+    for index, row in orders_sorted.iterrows():
+        if row["Buy/Sell"] == "BUY":
+            total_quantity += row["Quantity"]
+            total_cost_basis += row["CostBasis"]
+        elif row["Buy/Sell"] == "SELL":
+            qty_sold = abs(row["Quantity"])
+            # net_cash = row['NetCash']
+            fifopnl = row["FifoPnlRealized"]
+            sale_cost_basis = abs(row["CostBasis"])
+
+            total_cost_basis -= sale_cost_basis
+            total_quantity -= qty_sold
+            total_pnl += fifopnl
+
+    average_unit_price = (
+        total_cost_basis / total_quantity if total_quantity > 0 else 0.0
+    )
+
+    fees = abs(orders["Taxes"].sum()) + abs(orders["IBCommission"].sum())
     total_sell = abs(orders[(orders["Buy/Sell"] == "SELL")]["Quantity"].sum())
     total_buy = orders[(orders["Buy/Sell"] == "BUY")]["Quantity"].sum()
-    current_quantity = orders["Quantity"].sum()
+
     return (
-        int(np.round(current_quantity, 0)),
+        int(np.round(total_quantity, 0)),
+        np.round(average_unit_price, 2),
+        np.round(fees, 2),
+        np.round(total_cost_basis, 2),
+        np.round(total_pnl, 2),
         np.round(total_buy, 1),
         np.round(total_sell, 1),
     )
-
-
-def squash(portfolio, new_symbol, old_symbol):
-    # Select rows to merge
-    new_asset = portfolio[portfolio["SYMBOL"] == new_symbol].iloc[0]
-    old_asset = portfolio[portfolio["SYMBOL"] == old_symbol].iloc[0]
-
-    # Sum numerical values
-    squash_asset = (
-        new_asset[["CostBasis", "Quantity", "Total Buy", "Total Sell", "PnL", "Fees"]]
-        + old_asset[["CostBasis", "Quantity", "Total Buy", "Total Sell", "PnL", "Fees"]]
-    )
-
-    # Combine non-numerical values (take from new_symbol)
-    squash_asset["SYMBOL"] = new_symbol
-    squash_asset["Description"] = new_asset["Description"]
-    squash_asset["Exchange"] = new_asset["Exchange"]
-
-    # Drop the row of old and new asset reocrds. Concat the squashed asset
-    portfolio = portfolio[~portfolio["SYMBOL"].isin([new_symbol, old_symbol])]
-    portfolio = pd.concat([portfolio, pd.DataFrame([squash_asset])])
-
-    return portfolio
 
 
 def categorised_portfolio(portfolio, category_symbols):
@@ -163,15 +176,18 @@ def get_folios():
     data = []
 
     for symbol in symbols:
-        cost, pnl, fees = calculate(symbol)
         description, exchange = get_info(symbol)
-        current_quantity, total_buy, total_sell = buy_sell_trades(symbol)
+        current_quantity, unit_price, fees, cost_basis, pnl, total_buy, total_sell = (
+            calculate_portfolio_from_trades(symbol)
+        )
+
         data.append(
             [
                 symbol,
                 description,
                 exchange,
-                cost,
+                cost_basis,
+                unit_price,
                 current_quantity,
                 total_buy,
                 total_sell,
@@ -187,6 +203,7 @@ def get_folios():
             "Description",
             "Exchange",
             "CostBasis",
+            "UnitPrice",
             "Quantity",
             "Total Buy",
             "Total Sell",
@@ -194,8 +211,6 @@ def get_folios():
             "Fees",
         ],
     )
-    # Merge equities that has gone through an aquisition
-    portfolio = squash(portfolio, "IRD", "OCUP")
     portfolio = portfolio.sort_values(by="SYMBOL")
 
     total_pnl = portfolio["PnL"].sum()
@@ -234,10 +249,27 @@ def get_ticker_info(symbol, tickers):
     )
 
 
-def get_ticker_logo(symbol):
-    return (
+# def get_ticker_logo(symbol):
+#     return (
+#         f"https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png"
+#     )
+
+
+def get_logo(symbol):
+    primary_url = (
         f"https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png"
     )
+    fallback_url = f"https://raw.githubusercontent.com/N0-man/n03an-folio/gh-pages/static/ticker_icons/{symbol}.png"  # use this for logo's not maintained by nvstly
+    default_url = "https://raw.githubusercontent.com/N0-man/n03an-folio/main/logo.png"
+
+    try:
+        response = requests.head(primary_url)
+        if response.status_code == 200:
+            return primary_url
+        else:
+            return fallback_url
+    except requests.RequestException:
+        return default_url
 
 
 def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
@@ -251,6 +283,7 @@ def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
         symbol = row["SYMBOL"]
         quantity = row["Quantity"]
         cost_basis = row["CostBasis"]
+
         fifty_two_high, fifty_two_low, day_high, day_low, current = get_ticker_info(
             symbol, tickers
         )
@@ -261,8 +294,8 @@ def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
         portfolio.at[index, "UPnL"] = u_pnl
         portfolio.at[index, "TPnL"] = np.round((u_pnl + row["PnL"]), 2)
         portfolio.at[index, "MarketValue"] = market_value
-        portfolio.at[index, "Logo"] = get_ticker_logo(symbol)
-        portfolio.at[index, "UnitCost"] = get_unit_cost(cost_basis, row["Total Buy"])
+        portfolio.at[index, "Logo"] = get_logo(symbol)
+        portfolio.at[index, "UnitPrice"] = row["UnitPrice"]
         portfolio.at[index, "Current"] = current
         portfolio.at[index, "52High"] = fifty_two_high
         portfolio.at[index, "52Low"] = fifty_two_low
@@ -292,12 +325,3 @@ def get_market_data(portfolio, total_r_pnl, principal_invested, available_cash):
 
 def get_unit_cost(cost_basis, quantity):
     return np.round(cost_basis / quantity, 2)
-
-
-# def table(folio):
-#     # table
-#     html_table = folio.to_html(index=False)
-#     display_html(html_table, raw=True)
-
-# def render(cat_folio, title):
-#     table(cat_folio)
