@@ -74,6 +74,7 @@ def render_data():
         )
         + folio_ticker_table(portfolio)
         + ticker_cards(portfolio)
+        + folio_exited_assets(exited_assets)
     )
 
 
@@ -104,9 +105,7 @@ def render_ticker_tab(ticker):
 
 def render_ticker_info(symbol):
     file_path = f"static/ticker_info/{symbol}.md"
-    # default_logo = f"![{symbol}](https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png)"
-    # logo = f"![{symbol}](https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png)"
-    logo = f"![{symbol}]({get_ticker_logo(symbol)})"
+    logo = f"![{symbol}]({get_logo(symbol)})"
 
     try:
         with open(file_path, "r", encoding="utf-8") as file:
