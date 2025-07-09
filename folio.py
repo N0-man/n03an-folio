@@ -12,9 +12,8 @@ GROWTH = "Growth"
 EMERGING = "Emerging"
 DIVIDENT = "Divident"
 MARKET_DATA_REFRESH = (
-    3600  # refresh every 60 mins - total refresh time is 50-60 seconds
+    7200  # refresh every 120 mins - total refresh time is 50-60 seconds
 )
-# TICKER_DATA_REFRESH = 2  # additional 2 seconds to allow market data refresh
 passkey = os.getenv("PASSCODE")
 
 (
@@ -82,27 +81,6 @@ def render_ticker_tab(ticker):
     return ticker_cards(pd.DataFrame([ticker]))
 
 
-# def render_ticker_info(symbol):
-#     with open(f"static/{symbol}.md", "rb") as file:
-#         raw = file.read()
-#     raw_str = raw.decode("utf-8")
-#     return raw_str
-
-
-# def render_ticker_info(symbol):
-#     file_path = f"static/ticker_info/{symbol}.md"
-#     try:
-#         logo = f"![{symbol}](https://n0-man.github.io/n03an-folio/static/ticker_icons/{symbol}.png)"
-#         with open(file_path, "rb") as file:
-#             raw_str = file.read()
-#     except FileNotFoundError:
-#         logo = f"![{symbol}](https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png)"
-#         raw_str = f"## {symbol}"
-#         with open(file_path, "w", encoding="utf-8") as file:
-#             file.write(raw_str)
-#     return logo + "<br><br>" + raw_str
-
-
 def render_ticker_info(symbol):
     file_path = f"static/ticker_info/{symbol}.md"
     logo = f"![{symbol}]({get_logo(symbol)})"
@@ -118,6 +96,13 @@ def render_ticker_info(symbol):
 
     # Return formatted markdown
     return f"\n{logo}\n\n{content}"
+
+
+def render_shariah_notes():
+    file_path = f"static/shariah.md"
+    with open(file_path, "r", encoding="utf-8") as file:
+        content = file.read()
+    return content
 
 
 def main():
@@ -153,14 +138,15 @@ def main():
         with gr.Tabs(visible=False, selected=IB) as folio_tabs:
             with gr.Tab(IB, id=IB, elem_id="main-folio-tab"):
                 gr.HTML(value=render_data, every=MARKET_DATA_REFRESH, padding=False)
+            with gr.Tab("Shariah"):
+                gr.Markdown(
+                    f"""
+                    {render_shariah_notes()}
+                    """
+                )
             for _, row in portfolio.iterrows():
                 symbol = row["SYMBOL"]
                 with gr.Tab(symbol):
-                    # gr.HTML(
-                    #     value=render_ticker_tab,
-                    #     every=TICKER_DATA_REFRESH,
-                    #     padding=False,
-                    # )
                     gr.Markdown(
                         f"""
                         {render_ticker_info(symbol)}

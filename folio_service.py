@@ -10,8 +10,6 @@ from yahooquery import Ticker
 from datetime import datetime
 import requests
 
-# import yfinance as yf
-
 # Manually update this based on your portfolio
 growth_symbols = ["VIR", "TSLA", "PLL", "MU", "IREN", "CLSK", "AMD", "BITB", "ALAB"]
 emerging_symbols = ["BTDR", "IRD", "CRMD", "LFMD"]
@@ -247,12 +245,6 @@ def get_ticker_info(symbol, tickers):
         np.round(tickers_summary[symbol]["dayLow"], 2),
         np.round(tickers_price[symbol]["regularMarketPrice"], 2),
     )
-
-
-# def get_ticker_logo(symbol):
-#     return (
-#         f"https://raw.githubusercontent.com/nvstly/icons/main/ticker_icons/{symbol}.png"
-#     )
 
 
 def get_logo(symbol):
