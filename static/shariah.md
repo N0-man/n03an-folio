@@ -284,7 +284,7 @@ So let’s bake this understanding of our limitations in the ratings we give by 
 ## Start reading about the company
 
 Read everything you possibly can about the company.
-Let’s say you want to analyze Enphase.  I would start by looking at the following sources:
+Let’s say you want to analyze Enphase.I would start by looking at the following sources:
 
 - [Review the company's halal report on Practical Islamic Finance](https://app.practicalislamicfinance.com/dashboard/stocks/ENPH/)
 - [Review the company’s investor presentation](https://investor.enphase.com/static-files/7a95029a-a55b-4f1a-8fe1-5b3c41fef946?v=july-2023)
@@ -344,7 +344,7 @@ Due to their strong moat, Apple just needs to sell you once, and if they do, the
 
 - **Branding**
 
-⠀If you see two sodas side-by-side, advertising the same flavor, one of them is Coca-Cola and the other one isn’t, which one are you choosing?  Many people including myself will opt for Coca-Cola.
+⠀If you see two sodas side-by-side, advertising the same flavor, one of them is Coca-Cola and the other one isn’t, which one are you choosing?Many people including myself will opt for Coca-Cola.
 It’s a strong brand, with a strong reputation, built over many decades.
 Even with substantial investments, competitors have failed to challenge or weaken it.
 Coca-Cola’s brand is a moat that protects its business.
@@ -363,7 +363,7 @@ I much prefer investing in a product that is selling because of its differentiat
 
 - **Data and Technology Flywheel**
 
-⠀As a company amasses more data to refine its algorithms, for e.g., Google collects more data on user searches, it enters into a virtuous cycle: more data enhances the product’s algorithms, making the product more effective, which in turn attracts more users, providing Google with even more data to improve the product and on and on.  I suspect this type of moat will play a larger role in future companies.
+⠀As a company amasses more data to refine its algorithms, for e.g., Google collects more data on user searches, it enters into a virtuous cycle: more data enhances the product’s algorithms, making the product more effective, which in turn attracts more users, providing Google with even more data to improve the product and on and on.I suspect this type of moat will play a larger role in future companies.
 While it’s advantageous for companies to have a moat, in today’s world of rapidly advancing technology, companies that rely too heavily on them and not enough on innovation are vulnerable. 
 A case in point is Google's sudden drop in popularity after ChatGPT was introduced.
 

@@ -17,6 +17,18 @@ divident_symbols = ["MRK", "TSM"]
 
 # Manually update this based future acquisitions
 acquisitions = [["IRD", "OCUP"]]
+acquisitions = {
+    "OCUP": {
+        "new_symbol": "IRD",
+        "description": "OPUS GENETICS INC",
+        "exchange": "NASDAQ",
+    },
+    "PLL": {
+        "new_symbol": "ELVR",
+        "description": "ELEVRA LITHIUM LTD",
+        "exchange": "NASDAQ",
+    },
+}
 
 data = "current_data"
 folio_key = os.getenv("FOLIO_KEY")
@@ -78,16 +90,14 @@ def get_trades():
     trades = decrypt(f"{data}/TRNT.csv")
 
     # squash aquisition
-    for SYMBOL, OLD_SYMBOL in acquisitions:
-        # replace with get_info
-        row = trades[
-            (trades["Symbol"] == SYMBOL) & (trades["LevelOfDetail"] == "EXECUTION")
-        ].iloc[0]
-        description, exchange = row["Description"], row["ListingExchange"]
+    for old_symbol, acquisition_info in acquisitions.items():
+        new_symbol = acquisition_info["new_symbol"]
+        description = acquisition_info["description"]
+        exchange = acquisition_info["exchange"]
 
-        trades.loc[trades["Symbol"] == OLD_SYMBOL, "Description"] = description
-        trades.loc[trades["Symbol"] == OLD_SYMBOL, "ListingExchange"] = exchange
-        trades.loc[trades["Symbol"] == OLD_SYMBOL, "Symbol"] = SYMBOL
+        trades.loc[trades["Symbol"] == old_symbol, "Description"] = description
+        trades.loc[trades["Symbol"] == old_symbol, "ListingExchange"] = exchange
+        trades.loc[trades["Symbol"] == old_symbol, "Symbol"] = new_symbol
 
     return trades
 
