@@ -198,8 +198,6 @@ Revenue From Haram / Total Revenue < 2.5%.
 Exceptions exist where such a criterion may not make sense such as if the company is in the startup phase or the nature of its business is cyclical and includes periods of abnormally low revenues.
 For example, Vir Biotechnology (VIR) is a company with more than 10 different treatments that are in various stages of development as of writing this.
 
-![alt text](vir.png)
-
 Since the bulk of its projects are not yet approved (pre-revenue) and the one treatment that it has approved (a COVID treatment) is no longer experiencing the same demand, its revenue is abnormally low compared to the previous few years. In the first quarter of 2023, it had only $63 million in revenue compared to $1.2 billion during the same period of 2022.
 
 Since the company has $2.25 billion in cash, it is earning substantial interest income, around $21 million per quarter. If we apply the rule, “Revenue from Haram/Total Revenue < 5%,” assuming we include “Interest Income” in “Revenue from Haram”, then VIR would fail this test miserably: Revenue From Haram / Total Revenue = $21 million / $60 million = 35% > 2.5%.
@@ -252,8 +250,6 @@ This consideration focuses on the company's:
 - Engagement in any questionable dealings with shady actors
 
 There is no formula for this criteria but passing it requires an understanding of the company's impact on everything it comes into contact with. Therefore, the investor must weigh the positive aspects of a company against the negative aspects. I like to use a T-Chart like the one below to make these comparisons:
-
-![alt text](comimpact.png)
 
 Investors should stay away from companies where the harm clearly outweighs the good. If the company's impact is ambiguous, it is advisable to refrain from investing until further information is available.
 
